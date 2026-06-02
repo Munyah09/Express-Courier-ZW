@@ -1,0 +1,27 @@
+node_modules/
+dist/
+.build/
+.env
+.env.*
+*.log
+**/node_modules/
+**/dist/
+**/.cache/
+*.local
+.vscode/
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage/
+logs/
+
+# Docker
+**/docker-compose.override.yml
+**/*.env
+
+# Netlify
+.netlify/
+
+# VS Code
+.vscode/

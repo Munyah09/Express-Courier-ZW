@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mufasa Express — Fast, Reliable Courier Across Zimbabwe</title>
+  <meta name="description" content="Zimbabwe's most reliable courier and logistics platform. Send parcels anywhere in Zimbabwe — same day, intercity, and international shipping." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #f97316;
+      --brand-dark: #ea6c08;
+      --brand-light: #fff7ed;
+      --dark: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    body { font-family: 'Inter', sans-serif; color: var(--dark); background: #fff; line-height: 1.6; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Utilities ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--brand); color: #fff; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 14px; border: none; cursor: pointer; transition: background .15s, transform .1s; }
+    .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); }
+    .btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--dark); font-weight: 600; font-size: 15px; padding: 13px 24px; border-radius: 14px; border: 2px solid var(--border); cursor: pointer; transition: border-color .15s; }
+    .btn-outline:hover { border-color: var(--brand); color: var(--brand); }
+    .tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); background: var(--brand-light); padding: 4px 12px; border-radius: 99px; }
+    .section-title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; line-height: 1.2; }
+    .section-sub { font-size: 17px; color: var(--muted); margin-top: 12px; max-width: 580px; }
+
+    /* ── Nav ── */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+    .logo { font-size: 20px; font-weight: 900; letter-spacing: -.5px; }
+    .logo span { color: var(--brand); }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); transition: color .15s; }
+    .nav-links a:hover { color: var(--dark); }
+    .nav-cta { display: flex; gap: 10px; }
+    @media (max-width: 768px) { .nav-links, .btn-outline { display: none; } }
+
+    /* ── Hero ── */
+    .hero { background: linear-gradient(135deg, #fff7ed 0%, #fff 60%); padding: 96px 0 80px; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--border); padding: 6px 14px 6px 6px; border-radius: 99px; font-size: 13px; font-weight: 600; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .hero-badge-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; }
+    .hero h1 { font-size: clamp(36px, 5vw, 60px); font-weight: 900; line-height: 1.1; letter-spacing: -.03em; }
+    .hero h1 span { color: var(--brand); }
+    .hero p { font-size: 18px; color: var(--muted); margin: 20px 0 36px; max-width: 480px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-stats { display: flex; gap: 36px; margin-top: 48px; padding-top: 36px; border-top: 1px solid var(--border); }
+    .stat-num { font-size: 30px; font-weight: 800; }
+    .stat-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+    .hero-visual { position: relative; }
+    .hero-card { background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: 0 8px 40px rgba(0,0,0,.08); }
+    .hero-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .hero-icon { width: 44px; height: 44px; background: var(--brand-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .hero-card h3 { font-size: 16px; font-weight: 700; }
+    .hero-card p { font-size: 13px; color: var(--muted); }
+    .track-input { width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-family: inherit; outline: none; margin-bottom: 10px; }
+    .track-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(249,115,22,.12); }
+    .track-btn { width: 100%; background: var(--brand); color: #fff; border: none; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; }
+    .track-btn:hover { background: var(--brand-dark); }
+    .timeline { margin-top: 20px; }
+    .tl-item { display: flex; gap: 12px; padding: 8px 0; }
+    .tl-dot-wrap { display: flex; flex-direction: column; align-items: center; }
+    .tl-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); flex-shrink: 0; margin-top: 5px; }
+    .tl-dot.active { background: var(--brand); }
+    .tl-dot.done { background: #22c55e; }
+    .tl-line { flex: 1; width: 1px; background: var(--border); margin: 4px 0; }
+    .tl-text { font-size: 13px; }
+    .tl-text .tl-label { font-weight: 600; color: var(--dark); }
+    .tl-text .tl-time { color: var(--muted); font-size: 11px; }
+    .float-card { position: absolute; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 18px; box-shadow: 0 8px 24px rgba(0,0,0,.1); font-size: 13px; font-weight: 600; }
+    .float-card.top { top: -20px; right: -10px; }
+    .float-card.bot { bottom: -20px; left: -20px; }
+    .float-card .fc-val { font-size: 22px; font-weight: 800; }
+    @media (max-width: 768px) { .hero-grid { grid-template-columns: 1fr; } .hero-visual { display: none; } }
+
+    /* ── Services ── */
+    .services { padding: 96px 0; }
+    .services-header { text-align: center; margin-bottom: 64px; }
+    .services-header .section-sub { margin: 12px auto 0; }
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .service-card { border: 1px solid var(--border); border-radius: 24px; padding: 32px; transition: box-shadow .2s, transform .2s; }
+    .service-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,.08); transform: translateY(-4px); }
+    .service-icon { font-size: 40px; margin-bottom: 20px; }
+    .service-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+    .service-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+    .service-card ul { list-style: none; margin-top: 16px; }
+    .service-card ul li { font-size: 13px; color: var(--muted); padding: 4px 0; display: flex; gap: 8px; }
+    .service-card ul li::before { content: '✓'; color: var(--brand); font-weight: 700; }
+    @media (max-width: 900px) { .services-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .services-grid { grid-template-columns: 1fr; } }
+
+    /* ── How it works ── */
+    .how { background: #f8fafc; padding: 96px 0; }
+    .how-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 56px; position: relative; }
+    .how-steps::before { content: ''; position: absolute; top: 28px; left: 12%; right: 12%; height: 2px; background: linear-gradient(90deg, var(--border), var(--brand), var(--border)); }
+    .step { text-align: center; position: relative; }
+    .step-num { width: 56px; height: 56px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 4px solid #fff; box-shadow: 0 0 0 2px var(--brand); }
+    .step h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 13px; color: var(--muted); }
+    @media (max-width: 768px) { .how-steps { grid-template-columns: 1fr 1fr; } .how-steps::before { display: none; } }
+    @media (max-width: 480px) { .how-steps { grid-template-columns: 1fr; } }
+
+    /* ── Coverage ── */
+    .coverage { padding: 96px 0; }
+    .coverage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .city-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 32px; }
+    .city-tag { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .city-tag::before { content: '📍'; font-size: 12px; }
+    .map-placeholder { background: linear-gradient(135deg, #fff7ed, #fed7aa); border-radius: 32px; height: 380px; display: flex; align-items: center; justify-content: center; font-size: 80px; border: 1px solid #fed7aa; }
+    @media (max-width: 768px) { .coverage-grid { grid-template-columns: 1fr; } }
+
+    /* ── Pricing ── */
+    .pricing { background: #f8fafc; padding: 96px 0; }
+    .pricing-header { text-align: center; margin-bottom: 64px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .price-card { background: #fff; border: 2px solid var(--border); border-radius: 28px; padding: 36px 32px; transition: border-color .2s; }
+    .price-card.popular { border-color: var(--brand); position: relative; }
+    .price-card.popular::before { content: 'Most Popular'; position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--brand); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 4px 14px; border-radius: 99px; }
+    .price-label { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+    .price-amount { font-size: 40px; font-weight: 900; letter-spacing: -.03em; }
+    .price-amount sup { font-size: 18px; font-weight: 700; vertical-align: top; margin-top: 10px; }
+    .price-amount .unit { font-size: 16px; font-weight: 500; color: var(--muted); }
+    .price-desc { font-size: 13px; color: var(--muted); margin: 12px 0 24px; }
+    .price-features { list-style: none; margin-bottom: 32px; }
+    .price-features li { font-size: 14px; color: #334155; padding: 7px 0; border-bottom: 1px solid #f1f5f9; display: flex; gap: 10px; }
+    .price-features li::before { content: '✓'; color: #22c55e; font-weight: 700; }
+    @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; } }
+
+    /* ── Testimonials ── */
+    .testimonials { padding: 96px 0; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
+    .testi-card { border: 1px solid var(--border); border-radius: 24px; padding: 28px; }
+    .stars { color: #f59e0b; font-size: 14px; margin-bottom: 12px; }
+    .testi-card blockquote { font-size: 15px; color: #334155; line-height: 1.7; font-style: italic; }
+    .testi-author { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--brand-light); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; color: var(--brand); }
+    .author-name { font-size: 14px; font-weight: 700; }
+    .author-role { font-size: 12px; color: var(--muted); }
+    @media (max-width: 900px) { .testi-grid { grid-template-columns: 1fr; max-width: 480px; margin: 32px auto 0; } }
+
+    /* ── CTA ── */
+    .cta-section { background: linear-gradient(135deg, var(--dark) 0%, #1e3a5f 100%); padding: 96px 0; text-align: center; }
+    .cta-section h2 { color: #fff; font-size: clamp(28px, 4vw, 48px); font-weight: 900; }
+    .cta-section p { color: #94a3b8; font-size: 18px; margin: 16px 0 40px; }
+    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-white { background: #fff; color: var(--dark); font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 14px; border: none; cursor: pointer; transition: opacity .15s; }
+    .btn-white:hover { opacity: .9; }
+    .btn-ghost { background: transparent; color: #fff; font-weight: 600; font-size: 15px; padding: 14px 28px; border-radius: 14px; border: 2px solid rgba(255,255,255,.3); cursor: pointer; transition: border-color .15s; }
+    .btn-ghost:hover { border-color: #fff; }
+
+    /* ── Footer ── */
+    footer { background: var(--dark); color: #94a3b8; padding: 64px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-logo { font-size: 22px; font-weight: 900; color: #fff; }
+    .footer-logo span { color: var(--brand); }
+    .footer-desc { font-size: 14px; margin-top: 12px; line-height: 1.7; }
+    .footer-col h4 { color: #fff; font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { font-size: 14px; padding: 4px 0; }
+    .footer-col ul li a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid #1e293b; padding-top: 24px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; gap: 8px; } }
+
+    /* ── Scroll animations ── */
+    .fade-up { opacity: 0; transform: translateY(32px); transition: opacity .6s ease, transform .6s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ─────────────────────────────────────────────────── -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <div class="logo">Mufasa <span>Express</span></div>
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#coverage">Coverage</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="/app" class="btn-outline" style="font-size:14px;padding:10px 18px;border-radius:10px;">Log In</a>
+        <a href="#track" class="btn-primary" style="font-size:14px;padding:10px 18px;border-radius:10px;">Track Parcel</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ────────────────────────────────────────────────── -->
+<section class="hero" id="home">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge"><div class="hero-badge-dot"></div> Now delivering across Zimbabwe</div>
+        <h1>Courier That <span>Actually Delivers</span></h1>
+        <p>Fast, reliable parcel delivery from Harare to Bulawayo and everywhere in between. Same-day, intercity, and collection point options.</p>
+        <div class="hero-actions">
+          <a href="/app/create" class="btn-primary">📦 Send a Parcel</a>
+          <a href="#track" class="btn-outline">🔍 Track My Parcel</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="stat-num">50K+</div><div class="stat-label">Parcels Delivered</div></div>
+          <div><div class="stat-num">98%</div><div class="stat-label">On-Time Rate</div></div>
+          <div><div class="stat-num">20+</div><div class="stat-label">Cities Covered</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <div class="hero-icon">📦</div>
+            <div><h3>Track Your Parcel</h3><p>Real-time updates, every step</p></div>
+          </div>
+          <input id="track-input" class="track-input" type="text" placeholder="Enter tracking number e.g. ME-17839-XK2A" />
+          <button class="track-btn" onclick="trackParcel()">Track Now →</button>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-dot-wrap"><div class="tl-dot done"></div><div class="tl-line"></div></div>
+              <div class="tl-text"><div class="tl-label">Accepted at Harare Branch</div><div class="tl-time">Today, 08:14 AM</div></div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot-wrap"><div class="tl-dot done"></div><div class="tl-line"></div></div>
+              <div class="tl-text"><div class="tl-label">Sorted & Packed</div><div class="tl-time">Today, 09:30 AM</div></div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot-wrap"><div class="tl-dot active"></div><div class="tl-line"></div></div>
+              <div class="tl-text"><div class="tl-label" style="color:#f97316;">In Transit to Bulawayo</div><div class="tl-time">Today, 11:00 AM</div></div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot-wrap"><div class="tl-dot"></div></div>
+              <div class="tl-text"><div class="tl-label" style="color:#94a3b8;">Out for Delivery</div><div class="tl-time">Estimated 4:00 PM</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="float-card top">🚀 <span class="fc-val">2hr</span> Express Available</div>
+        <div class="float-card bot">✅ <span class="fc-val">24/7</span> Support</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Track section ────────────────────────────────────────── -->
+<section id="track" style="padding:64px 0;background:#f8fafc;border-top:1px solid #e2e8f0;">
+  <div class="container" style="text-align:center;max-width:640px;">
+    <div class="tag">Real-Time Tracking</div>
+    <h2 class="section-title" style="margin-top:16px;">Where's Your Parcel?</h2>
+    <p class="section-sub" style="margin:12px auto 32px;">Enter your tracking number to get live status updates</p>
+    <div style="display:flex;gap:12px;max-width:480px;margin:0 auto;">
+      <input id="track-input-2" class="track-input" type="text" placeholder="ME-XXXXXXX-XXXXX" style="flex:1;margin:0;" />
+      <button class="btn-primary" style="border-radius:12px;padding:12px 24px;white-space:nowrap;" onclick="trackParcel2()">Track →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Services ─────────────────────────────────────────────── -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="services-header fade-up">
+      <div class="tag">What We Offer</div>
+      <h2 class="section-title" style="margin-top:16px;">Complete Logistics Solutions</h2>
+      <p class="section-sub">From individual parcels to bulk business logistics — we've got you covered across Zimbabwe</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card fade-up">
+        <div class="service-icon">🏠</div>
+        <h3>Home Delivery</h3>
+        <p>Door-to-door delivery right to your recipient's address. Safe, reliable, and signed for.</p>
+        <ul>
+          <li>GPS-tracked delivery agents</li>
+          <li>OTP-verified handoff</li>
+          <li>Signature collection</li>
+          <li>Photo proof of delivery</li>
+        </ul>
+      </div>
+      <div class="service-card fade-up" style="border-color:#f97316;background:#fff7ed;">
+        <div class="service-icon">🚚</div>
+        <h3>Intercity Express</h3>
+        <p>Harare to Bulawayo, Mutare, Masvingo and all major cities. Overnight and same-day options.</p>
+        <ul>
+          <li>Overnight intercity routes</li>
+          <li>Same-day express (select routes)</li>
+          <li>Refrigerated cargo available</li>
+          <li>Bulk freight pricing</li>
+        </ul>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon">📍</div>
+        <h3>Collection Points</h3>
+        <p>Drop off or collect at any of our 200+ collection points nationwide — including shops and agents.</p>
+        <ul>
+          <li>200+ collection points</li>
+          <li>Extended pick-up hours</li>
+          <li>Lower delivery costs</li>
+          <li>Secure parcel holding</li>
+        </ul>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon">🏢</div>
+        <h3>Business Accounts</h3>
+        <p>Bulk shipping for SMEs and enterprises. Monthly invoicing, dedicated account managers.</p>
+        <ul>
+          <li>Volume discounts</li>
+          <li>API integration available</li>
+          <li>Monthly consolidated billing</li>
+          <li>Priority processing</li>
+        </ul>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon">🛡️</div>
+        <h3>Insured Cargo</h3>
+        <p>Full insurance coverage for high-value items. Declare your value and ship with confidence.</p>
+        <ul>
+          <li>Up to $10,000 declared value</li>
+          <li>Electronics & fragile cover</li>
+          <li>Fast claims processing</li>
+          <li>Peace of mind guarantee</li>
+        </ul>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon">🔄</div>
+        <h3>Returns Management</h3>
+        <p>Easy returns for e-commerce businesses. Collect, inspect, and process returns seamlessly.</p>
+        <ul>
+          <li>E-commerce returns portal</li>
+          <li>Condition inspection on pickup</li>
+          <li>Automated refund triggers</li>
+          <li>Return analytics dashboard</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How It Works ──────────────────────────────────────────── -->
+<section class="how" id="how">
+  <div class="container">
+    <div style="text-align:center;" class="fade-up">
+      <div class="tag">Simple Process</div>
+      <h2 class="section-title" style="margin-top:16px;">Ship in 4 Easy Steps</h2>
+      <p class="section-sub" style="margin:12px auto 0;">Getting your parcel from A to B has never been simpler</p>
+    </div>
+    <div class="how-steps">
+      <div class="step fade-up">
+        <div class="step-num">1</div>
+        <h3>Create Shipment</h3>
+        <p>Enter sender & receiver details, parcel info, and choose your delivery type online or at any branch.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">2</div>
+        <h3>Drop Off or Collect</h3>
+        <p>Drop at any of our 200+ collection points or book a pickup from your door.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">3</div>
+        <h3>We Move It</h3>
+        <p>Your parcel travels through our network of drivers, vehicles, and relay points across Zimbabwe.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">4</div>
+        <h3>OTP Delivery</h3>
+        <p>Receiver gets an OTP code. Driver verifies on handoff — 100% secure, no wrong deliveries.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Coverage ──────────────────────────────────────────────── -->
+<section class="coverage" id="coverage">
+  <div class="container">
+    <div class="coverage-grid">
+      <div class="fade-up">
+        <div class="tag">National Coverage</div>
+        <h2 class="section-title" style="margin-top:16px;">We Deliver Everywhere in Zimbabwe</h2>
+        <p class="section-sub">From Victoria Falls to Beitbridge, Plumtree to Mutare — our network reaches every corner of the country.</p>
+        <div class="city-grid" style="margin-top:28px;">
+          <div class="city-tag">Harare</div>
+          <div class="city-tag">Bulawayo</div>
+          <div class="city-tag">Mutare</div>
+          <div class="city-tag">Gweru</div>
+          <div class="city-tag">Kwekwe</div>
+          <div class="city-tag">Masvingo</div>
+          <div class="city-tag">Chinhoyi</div>
+          <div class="city-tag">Bindura</div>
+          <div class="city-tag">Kariba</div>
+          <div class="city-tag">Beitbridge</div>
+          <div class="city-tag">Vic Falls</div>
+          <div class="city-tag">Chiredzi</div>
+        </div>
+      </div>
+      <div class="fade-up">
+        <div class="map-placeholder">🗺️</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Pricing ───────────────────────────────────────────────── -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="pricing-header fade-up">
+      <div class="tag">Simple Pricing</div>
+      <h2 class="section-title" style="margin-top:16px;">Transparent Rates, No Surprises</h2>
+      <p class="section-sub" style="margin:12px auto 0;">Prices in USD. Volume discounts available for business accounts.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card fade-up">
+        <div class="price-label">Local (within city)</div>
+        <div class="price-amount"><sup>$</sup>2<span class="unit">/parcel</span></div>
+        <div class="price-desc">Same-day within Harare, Bulawayo or any single city</div>
+        <ul class="price-features">
+          <li>Up to 5kg</li>
+          <li>Home or collection point</li>
+          <li>OTP-verified delivery</li>
+          <li>Real-time tracking</li>
+        </ul>
+        <a href="/app/create" class="btn-outline" style="width:100%;justify-content:center;">Get Started</a>
+      </div>
+      <div class="price-card popular fade-up">
+        <div class="price-label">Intercity</div>
+        <div class="price-amount"><sup>$</sup>5<span class="unit">/parcel</span></div>
+        <div class="price-desc">Overnight delivery between any two major cities in Zimbabwe</div>
+        <ul class="price-features">
+          <li>Up to 10kg</li>
+          <li>Next-day guaranteed</li>
+          <li>Insured up to $500</li>
+          <li>SMS + WhatsApp updates</li>
+          <li>Priority sorting</li>
+        </ul>
+        <a href="/app/create" class="btn-primary" style="width:100%;justify-content:center;">Ship Intercity</a>
+      </div>
+      <div class="price-card fade-up">
+        <div class="price-label">Business / Bulk</div>
+        <div class="price-amount"><sup>$</sup>3<span class="unit">/parcel</span></div>
+        <div class="price-desc">Bulk rates for 50+ parcels/month. Custom pricing available.</div>
+        <ul class="price-features">
+          <li>Volume discounts</li>
+          <li>Dedicated account manager</li>
+          <li>Monthly invoicing</li>
+          <li>API access</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="tel:+263771000001" class="btn-outline" style="width:100%;justify-content:center;">Call Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Testimonials ──────────────────────────────────────────── -->
+<section class="testimonials">
+  <div class="container">
+    <div style="text-align:center;" class="fade-up">
+      <div class="tag">Customer Love</div>
+      <h2 class="section-title" style="margin-top:16px;">Trusted by Zimbabweans</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card fade-up">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I send goods from Harare to Bulawayo twice a week. Mufasa Express is the only courier I trust. Never had a lost parcel in 2 years."</blockquote>
+        <div class="testi-author">
+          <div class="avatar">TM</div>
+          <div><div class="author-name">Tinashe Mutasa</div><div class="author-role">SME Owner, Harare</div></div>
+        </div>
+      </div>
+      <div class="testi-card fade-up" style="border-color:#f97316;">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The OTP delivery system is genius. I know my parcel actually reached my customer and wasn't left with a neighbor. Game changer for my online shop."</blockquote>
+        <div class="testi-author">
+          <div class="avatar">CN</div>
+          <div><div class="author-name">Chido Ncube</div><div class="author-role">Online Retailer, Bulawayo</div></div>
+        </div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Real-time tracking via WhatsApp keeps my customers happy. The collection point near my area is super convenient. Highly recommend!"</blockquote>
+        <div class="testi-author">
+          <div class="avatar">RD</div>
+          <div><div class="author-name">Rudo Dube</div><div class="author-role">Boutique Owner, Gweru</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ───────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="container fade-up">
+    <h2>Ready to Ship Your First Parcel?</h2>
+    <p>Join thousands of Zimbabweans who trust Mufasa Express for fast, reliable delivery.</p>
+    <div class="cta-btns">
+      <a href="/app/create" class="btn-white">📦 Create Shipment</a>
+      <a href="tel:+263771000001" class="btn-ghost">📞 Call Us: +263 77 100 0001</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Mufasa <span>Express</span></div>
+        <p class="footer-desc">Zimbabwe's most reliable courier and logistics platform. Fast deliveries, real-time tracking, and OTP-secured handoffs across the country.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Home Delivery</a></li>
+          <li><a href="#services">Intercity Express</a></li>
+          <li><a href="#services">Collection Points</a></li>
+          <li><a href="#services">Business Accounts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#coverage">Coverage</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="/app">Staff Login</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>+263 77 100 0001</li>
+          <li>info@mufasa.co.zw</li>
+          <li>Harare CBD, Zimbabwe</li>
+          <li>Mon–Sat 7AM – 8PM</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Mufasa Express Courier. All rights reserved.</span>
+      <span>Built with ❤️ in Zimbabwe 🇿🇼</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Tracking
+  function trackParcel() {
+    const num = document.getElementById('track-input').value.trim();
+    if (num) window.location.href = '/tracking?q=' + encodeURIComponent(num);
+  }
+  function trackParcel2() {
+    const num = document.getElementById('track-input-2').value.trim();
+    if (num) window.location.href = '/tracking?q=' + encodeURIComponent(num);
+  }
+  document.getElementById('track-input').addEventListener('keydown', e => { if (e.key === 'Enter') trackParcel(); });
+  document.getElementById('track-input-2').addEventListener('keydown', e => { if (e.key === 'Enter') trackParcel2(); });
+</script>
+</body>
+</html>

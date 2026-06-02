@@ -1,0 +1,124 @@
+openapi: 3.1.0
+info:
+  title: Mufasa Express Courier API
+  version: 0.1.0
+  description: API specification for the Mufasa Express courier management platform.
+servers:
+  - url: http://localhost:4000/api
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate user and obtain JWT access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  user:
+                    type: object
+  /auth/refresh:
+    post:
+      summary: Refresh JWT access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required:
+                - token
+      responses:
+        '200':
+          description: Access token refreshed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+  /parcels:
+    get:
+      summary: List parcels for authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of parcels
+    post:
+      summary: Create a new parcel
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                senderId:
+                  type: string
+                receiverId:
+                  type: string
+                weight:
+                  type: number
+                dimensions:
+                  type: string
+                declaredValue:
+                  type: number
+                insuranceAmount:
+                  type: number
+                collectionPointId:
+                  type: string
+                deliveryLocation:
+                  type: string
+              required:
+                - senderId
+                - receiverId
+      responses:
+        '201':
+          description: Parcel created
+  /parcels/{trackingNumber}:
+    get:
+      summary: Get parcel status by tracking number
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: trackingNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Parcel details
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
