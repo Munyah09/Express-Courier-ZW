@@ -1,16 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
-import api from '../lib/api';
+import { supabase } from '../lib/supabase';
 
 function useDashboardStats() {
   return useQuery({
     queryKey: ['dashboard', 'stats'],
     queryFn: async () => {
-      const { data } = await api.get('/dashboard/stats');
-      return data.data;
+      const { data, error } = await supabase.rpc('get_dashboard_stats');
+      if (error) throw error;
+      return data;
     },
-    refetchInterval: 30_000
+    refetchInterval: 30_000,
   });
 }
 

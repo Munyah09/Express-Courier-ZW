@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
-import api from '../lib/api';
 
 const DEMO_ACCOUNTS = [
-  { label: 'Super Admin',     email: 'super@admin.com',        password: 'griezmann17', role: 'super_admin' },
+  { label: 'Super Admin',     email: 'super@admin.com',        password: '@@Griezmann177#$', role: 'super_admin' },
   { label: 'Admin',           email: 'admin@mufasa.co.zw',     password: 'Demo@1234',   role: 'admin' },
   { label: 'Branch Manager',  email: 'manager@mufasa.co.zw',   password: 'Demo@1234',   role: 'branch_manager' },
   { label: 'Driver',          email: 'driver@mufasa.co.zw',    password: 'Demo@1234',   role: 'driver' },
@@ -35,11 +34,10 @@ export function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const { data } = await api.post('/auth/login', { email, password });
-      login(data.accessToken, data.refreshToken, data.user);
+      await login(email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
+      setError(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -139,7 +137,7 @@ export function LoginPage() {
             ))}
           </div>
           <p className="mt-3 text-center text-[10px] text-slate-400">
-            Demo password: <span className="font-mono font-semibold text-slate-600">Demo@1234</span> (except Super Admin)
+            Other accounts: <span className="font-mono font-semibold text-slate-600">Demo@1234</span>
           </p>
         </div>
 

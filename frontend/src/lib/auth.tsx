@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { setToken } from './api';
+import { supabase } from './supabase';
 
 interface AuthUser {
   id: string;
@@ -11,9 +11,8 @@ interface AuthUser {
 
 interface AuthContextValue {
   user: AuthUser | null;
-  accessToken: string | null;
-  login: (accessToken: string, refreshToken: string, user: AuthUser) => void;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -21,39 +20,67 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
-    const stored = localStorage.getItem('starverse_user');
+    const stored = localStorage.getItem('mufasa_user');
     return stored ? JSON.parse(stored) : null;
-  });
-  const [accessToken, setAccessToken] = useState<string | null>(() => {
-    return localStorage.getItem('starverse_token');
   });
 
   useEffect(() => {
-    // Sync the stored token into axios on mount (handles page refresh)
-    const stored = localStorage.getItem('starverse_token');
-    if (stored) setToken(stored);
+    // Restore session on mount
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session) {
+        await loadUser(session.user.id);
+      } else {
+        setUser(null);
+        localStorage.removeItem('mufasa_user');
+      }
+    });
+
+    // Keep in sync with Supabase auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        await loadUser(session.user.id);
+      } else {
+        setUser(null);
+        localStorage.removeItem('mufasa_user');
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = (token: string, refreshToken: string, authUser: AuthUser) => {
-    localStorage.setItem('starverse_token', token);
-    localStorage.setItem('starverse_refresh', refreshToken);
-    localStorage.setItem('starverse_user', JSON.stringify(authUser));
-    setToken(token);
-    setAccessToken(token);
-    setUser(authUser);
+  const loadUser = async (authId: string) => {
+    const { data } = await supabase
+      .from('users')
+      .select('id, email, first_name, last_name, role:roles(name)')
+      .eq('id', authId)
+      .single();
+
+    if (data) {
+      const authUser: AuthUser = {
+        id: data.id,
+        email: data.email,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        role: (data.role as any)?.name || 'staff',
+      };
+      setUser(authUser);
+      localStorage.setItem('mufasa_user', JSON.stringify(authUser));
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem('starverse_token');
-    localStorage.removeItem('starverse_refresh');
-    localStorage.removeItem('starverse_user');
-    setToken('');
-    setAccessToken(null);
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw new Error(error.message);
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem('mufasa_user');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
