@@ -15,7 +15,7 @@ yarn-debug.log*
 yarn-error.log*
 coverage/
 logs/
-
+.env
 # Docker
 **/docker-compose.override.yml
 **/*.env
@@ -25,3 +25,4 @@ logs/
 
 # VS Code
 .vscode/
+.env

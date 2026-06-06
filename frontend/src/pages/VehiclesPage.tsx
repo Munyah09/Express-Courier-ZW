@@ -3,11 +3,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
 import { useToast } from '../components/Toast';
 
-const VEHICLE_TYPES = ['Motorcycle', 'Pickup Truck', 'Van', 'Mini Truck', 'Truck', 'Bus Partner'];
+const VEHICLE_TYPES = [
+  'Bicycle', 'Motorcycle', 'Pickup Truck', 'Van', 'Mini Truck', 'Truck',
+  'Mushika Shika', 'Kombi / Minibus', 'Long Distance Bus', 'Partner Courier',
+];
 
 const TYPE_ICONS: Record<string, string> = {
-  Motorcycle: '🏍️', 'Pickup Truck': '🛻', Van: '🚐', 'Mini Truck': '🚚', Truck: '🚛', 'Bus Partner': '🚌',
+  Bicycle: '🚲', Motorcycle: '🏍️', 'Pickup Truck': '🛻', Van: '🚐',
+  'Mini Truck': '🚚', Truck: '🚛', 'Mushika Shika': '🚗',
+  'Kombi / Minibus': '🚌', 'Long Distance Bus': '🚍', 'Partner Courier': '📦',
 };
+
+const THIRD_PARTY_TYPES = ['Mushika Shika', 'Kombi / Minibus', 'Long Distance Bus', 'Partner Courier'];
 
 const FUEL_COLORS: Record<string, string> = {
   full: 'bg-green-100 text-green-700', half: 'bg-yellow-100 text-yellow-700', low: 'bg-red-100 text-red-700', empty: 'bg-red-200 text-red-800',
@@ -34,16 +41,18 @@ export function VehiclesPage() {
   const patchVehicle = usePatchVehicle();
 
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ registration: '', type: 'Van', makeModel: '', mileage: '', fuelStatus: 'full' });
+  const [form, setForm] = useState({ registration: '', type: 'Van', makeModel: '', mileage: '', fuelStatus: 'full', ownerName: '' });
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
   const handleAdd = async () => {
-    if (!form.registration) { notify('Registration plate is required', 'error'); return; }
+    const isThirdParty = THIRD_PARTY_TYPES.includes(form.type);
+    if (!form.registration && !isThirdParty) { notify('Registration plate is required', 'error'); return; }
+    if (isThirdParty && !form.registration) setForm(p => ({ ...p, registration: `3P-${Date.now()}` }));
     try {
-      await createVehicle.mutateAsync({ ...form, mileage: Number(form.mileage) || 0 });
+      await createVehicle.mutateAsync({ ...form, mileage: Number(form.mileage) || 0, isThirdParty });
       notify('Vehicle added', 'success');
       setShowAdd(false);
-      setForm({ registration: '', type: 'Van', makeModel: '', mileage: '', fuelStatus: 'full' });
+      setForm({ registration: '', type: 'Van', makeModel: '', mileage: '', fuelStatus: 'full', ownerName: '' });
     } catch { notify('Failed to add vehicle', 'error'); }
   };
 
@@ -98,6 +107,9 @@ export function VehiclesPage() {
                   <td className="px-5 py-3.5">
                     <p className="font-mono font-semibold text-slate-900">{v.registration}</p>
                     <p className="text-xs text-slate-500">{v.make_model || '—'}</p>
+                    {THIRD_PARTY_TYPES.includes(v.type) && (
+                      <span className="inline-block mt-0.5 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">3rd Party</span>
+                    )}
                   </td>
                   <td className="hidden px-5 py-3.5 sm:table-cell">
                     <span className="flex items-center gap-1.5"><span>{TYPE_ICONS[v.type]}</span><span>{v.type}</span></span>
@@ -133,6 +145,13 @@ export function VehiclesPage() {
               <select value={form.fuelStatus} onChange={e => set('fuelStatus', e.target.value)} className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-400 focus:outline-none">
                 <option value="full">Full</option><option value="half">Half</option><option value="low">Low</option><option value="empty">Empty</option>
               </select>
+              {THIRD_PARTY_TYPES.includes(form.type) && (
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 space-y-2">
+                  <p className="text-xs font-semibold text-amber-700">3rd Party Transport — Additional Info</p>
+                  <input placeholder="Owner / Operator name" value={form.ownerName} onChange={e => set('ownerName', e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-brand-400 focus:outline-none" />
+                  <p className="text-xs text-amber-600">Registration is optional for 3rd party vehicles (auto-generated if blank).</p>
+                </div>
+              )}
             </div>
             <div className="mt-5 flex gap-3">
               <button onClick={() => setShowAdd(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600">Cancel</button>

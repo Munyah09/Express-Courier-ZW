@@ -14,7 +14,7 @@ export const listParcels = async (req: Request, res: Response) => {
     const { data, total } = await parcelService.listParcels(limit, offset, filters);
     res.json({ data, meta: { total, limit, offset } });
   } catch (error) {
-    res.status(500).json({ error: String(error) });
+    res.status(500).json({ error: (error as any)?.message || String(error) });
   }
 };
 
@@ -40,8 +40,9 @@ export const createParcel = async (req: Request, res: Response) => {
     notifyParcelStatusChange(parcel.id, 'Accepted', { handlerUserId }).catch(console.error);
 
     res.status(201).json({ data: parcel });
-  } catch (error) {
-    res.status(500).json({ error: String(error) });
+  } catch (error: any) {
+    const msg = error?.message || error?.details || String(error);
+    res.status(500).json({ error: msg });
   }
 };
 
@@ -82,7 +83,7 @@ export const updateParcelStatus = async (req: Request, res: Response) => {
 
     res.json({ data: parcel });
   } catch (error) {
-    res.status(500).json({ error: String(error) });
+    res.status(500).json({ error: (error as any)?.message || String(error) });
   }
 };
 
@@ -94,6 +95,6 @@ export const recordParcelEvent = async (req: Request, res: Response) => {
     const event  = await parcelService.recordParcelEvent(parcelId, eventType, description, userId, undefined, gpsPoint, photoUrl);
     res.status(201).json({ data: event });
   } catch (error) {
-    res.status(500).json({ error: String(error) });
+    res.status(500).json({ error: (error as any)?.message || String(error) });
   }
 };

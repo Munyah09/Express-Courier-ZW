@@ -30,7 +30,7 @@ router.use('/pricing', pricingRouter);
 router.use('/custody', custodyRouter);
 
 router.get('/', (_req, res) => {
-  res.json({ service: 'Mufasa Express API', version: '0.1.0' });
+  res.json({ service: 'Starverse Express API', version: '0.1.0' });
 });
 
 export default router;

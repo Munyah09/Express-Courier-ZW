@@ -1,6 +1,6 @@
 # Supabase Integration Guide
 
-This folder contains guidance for connecting the Mufasa Express platform to Supabase services.
+This folder contains guidance for connecting the Starverse Express platform to Supabase services.
 
 ## Recommended architecture
 - PostgreSQL: Supabase managed database as the primary relational datastore.

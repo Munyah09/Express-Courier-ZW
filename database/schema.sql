@@ -1,4 +1,4 @@
--- PostgreSQL schema for Mufasa Express Courier logistics platform
+-- PostgreSQL schema for Starverse Express Courier logistics platform
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 

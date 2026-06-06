@@ -18,7 +18,7 @@ function FranchiseDetail({ franchiseId, name, onBack }: { franchiseId: string; n
           {[1, 2, 3].map((i) => <div key={i} className="h-24 animate-pulse rounded-2xl bg-slate-100" />)}
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 p-6">
             <p className="text-sm font-medium text-blue-700">Total Revenue</p>
             <p className="mt-2 text-3xl font-bold text-blue-900">${stats?.totalRevenue ?? '0'}</p>

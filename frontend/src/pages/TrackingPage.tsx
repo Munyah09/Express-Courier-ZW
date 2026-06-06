@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useParcelTrack } from '../hooks/useQueries';
 
@@ -58,10 +58,30 @@ function ProgressBar({ status }: { status: string }) {
   );
 }
 
+async function decodeQRFile(file: File): Promise<string | null> {
+  const jsQR = (await import('jsqr')).default;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.src = url;
+  await new Promise(resolve => { img.onload = resolve; });
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  ctx.drawImage(img, 0, 0);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  URL.revokeObjectURL(url);
+  const code = jsQR(imageData.data, imageData.width, imageData.height);
+  return code?.data ?? null;
+}
+
 export function TrackingPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [inputValue, setInputValue] = useState(searchParams.get('q') ?? '');
   const [activeTracking, setActiveTracking] = useState(searchParams.get('q') ?? '');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [qrStatus, setQrStatus] = useState('');
 
   // When ?q= changes externally (e.g. from landing page link), sync state
   useEffect(() => {
@@ -88,7 +108,7 @@ export function TrackingPage() {
   const meta = parcel ? (STATUS_META[parcel.status] ?? STATUS_META['Accepted']) : null;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5">
+    <div className="mx-auto max-w-3xl space-y-5">
       {/* Search */}
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">Track Your Parcel</h1>
@@ -101,13 +121,42 @@ export function TrackingPage() {
             placeholder="e.g. ME-1748919827410-ABCDE"
             className="flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-mono placeholder-slate-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
           />
-          <button
-            type="submit"
-            className="rounded-2xl bg-brand-500 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors"
-          >
+          <button type="submit" className="rounded-2xl bg-brand-500 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors">
             Track →
           </button>
         </form>
+
+        {/* QR code upload */}
+        <div className="mt-3 flex items-center gap-3">
+          <div className="h-px flex-1 bg-slate-100" />
+          <span className="text-xs text-slate-400">or</span>
+          <div className="h-px flex-1 bg-slate-100" />
+        </div>
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            setQrStatus('Decoding QR…');
+            const result = await decodeQRFile(file);
+            if (result) {
+              setInputValue(result.trim().toUpperCase());
+              setActiveTracking(result.trim().toUpperCase());
+              setSearchParams({ q: result.trim().toUpperCase() }, { replace: true });
+              setQrStatus('');
+            } else {
+              setQrStatus('No QR code found in image.');
+            }
+            if (fileInputRef.current) fileInputRef.current.value = '';
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="mt-2 w-full rounded-2xl border-2 border-dashed border-slate-200 py-3 text-sm font-medium text-slate-500 hover:border-brand-400 hover:text-brand-600 transition-all"
+        >
+          🖼️ Upload QR Code Image to Track
+        </button>
+        {qrStatus && <p className="mt-1 text-xs text-center text-slate-500">{qrStatus}</p>}
       </div>
 
       {/* Loading */}

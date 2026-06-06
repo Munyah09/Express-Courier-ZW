@@ -69,7 +69,7 @@ async function sendSMS(phone: string, message: string): Promise<{ success: boole
 async function sendEmail(to: string, subject: string, html: string): Promise<{ success: boolean }> {
   try {
     const info = await transporter.sendMail({
-      from: `"Mufasa Express" <${process.env.EMAIL_SMTP_USER}>`,
+      from: `"Starverse Express" <${process.env.EMAIL_SMTP_USER}>`,
       to,
       subject,
       html,
@@ -108,7 +108,7 @@ function buildStatusMessage(opts: {
 
   const emoji = statusEmojis[opts.status] ?? '📍';
 
-  let msg = `*Mufasa Express — Parcel Update* ${emoji}\n\n`;
+  let msg = `*Starverse Express — Parcel Update* ${emoji}\n\n`;
   msg += `Hello ${opts.receiverName},\n\n`;
   msg += `Your parcel *${opts.trackingNumber}* is now:\n`;
   msg += `*${opts.status.toUpperCase()}*\n\n`;
@@ -206,7 +206,7 @@ export async function notifyParcelStatusChange(
     }
   }
 
-  const trackUrl    = `https://mufasa.co.zw/track/${parcelQ.data.tracking_number}`;
+  const trackUrl    = `https://Starverse.co.zw/track/${parcelQ.data.tracking_number}`;
   const receiverName = `${receiver.first_name} ${receiver.last_name}`.trim();
 
   const whatsappMsg = buildStatusMessage({
@@ -226,7 +226,7 @@ export async function notifyParcelStatusChange(
   const emailHtml = `
     <div style="font-family:sans-serif;max-width:520px;margin:auto">
       <div style="background:#f97316;padding:20px 24px;border-radius:12px 12px 0 0">
-        <h2 style="color:#fff;margin:0">Mufasa Express</h2>
+        <h2 style="color:#fff;margin:0">Starverse Express</h2>
       </div>
       <div style="padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">
         <p>Hello <strong>${receiverName}</strong>,</p>
@@ -238,7 +238,7 @@ export async function notifyParcelStatusChange(
           Track Parcel
         </a>
       </div>
-      <p style="font-size:12px;color:#94a3b8;margin-top:12px;text-align:center">Mufasa Express Courier · Zimbabwe 🇿🇼</p>
+      <p style="font-size:12px;color:#94a3b8;margin-top:12px;text-align:center">Starverse Express Courier · Zimbabwe 🇿🇼</p>
     </div>
   `;
 
@@ -247,7 +247,7 @@ export async function notifyParcelStatusChange(
   // WhatsApp takes priority — use whatsapp number if different from phone
   const waNumber = receiver.whatsapp || receiver.phone;
   if (waNumber)      notifications.push(sendWhatsApp(waNumber, whatsappMsg));
-  if (receiver.phone && receiver.phone !== waNumber) notifications.push(sendSMS(receiver.phone, `Mufasa Express: ${parcelQ.data.tracking_number} is now ${newStatus}. Track: ${trackUrl}`));
+  if (receiver.phone && receiver.phone !== waNumber) notifications.push(sendSMS(receiver.phone, `Starverse Express: ${parcelQ.data.tracking_number} is now ${newStatus}. Track: ${trackUrl}`));
   if (receiver.email) notifications.push(sendEmail(receiver.email, `Parcel Update – ${newStatus} | ${parcelQ.data.tracking_number}`, emailHtml));
 
   return Promise.allSettled(notifications);
@@ -272,7 +272,7 @@ export async function notifyHandover(
   const receiver: any = Array.isArray(rawReceiver) ? rawReceiver[0] : rawReceiver;
   if (!receiver) return;
 
-  const trackUrl = `https://mufasa.co.zw/track/${parcelQ.data.tracking_number}`;
+  const trackUrl = `https://Starverse.co.zw/track/${parcelQ.data.tracking_number}`;
   const receiverName = `${receiver.first_name} ${receiver.last_name}`.trim();
 
   const msg = buildStatusMessage({

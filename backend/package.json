@@ -1,5 +1,5 @@
 {
-  "name": "mufasa-express-backend",
+  "name": "starverse-express-backend",
   "version": "0.1.0",
   "private": true,
   "main": "dist/index.js",

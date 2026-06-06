@@ -19,8 +19,9 @@ export const createCustomer = async (req: Request, res: Response) => {
 
     const customer = await customerService.createCustomer(input);
     res.status(201).json({ data: customer });
-  } catch (error) {
-    res.status(500).json({ error: String(error) });
+  } catch (error: any) {
+    const msg = error?.message || error?.details || String(error);
+    res.status(500).json({ error: msg });
   }
 };
 
@@ -45,7 +46,7 @@ export const searchCustomers = async (req: Request, res: Response) => {
     const customers = await customerService.searchCustomers(query);
     res.json({ data: customers });
   } catch (error) {
-    res.status(500).json({ error: String(error) });
+    res.status(500).json({ error: (error as any)?.message || String(error) });
   }
 };
 
@@ -66,6 +67,6 @@ export const updateCustomer = async (req: Request, res: Response) => {
     const customer = await customerService.updateCustomer(customerId, updates);
     res.json({ data: customer });
   } catch (error) {
-    res.status(500).json({ error: String(error) });
+    res.status(500).json({ error: (error as any)?.message || String(error) });
   }
 };

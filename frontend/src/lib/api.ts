@@ -9,7 +9,7 @@ export const setToken = (newToken: string) => {
 };
 
 const api = axios.create({
-  baseURL: API_BASE_URL
+  baseURL: API_BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
@@ -18,5 +18,37 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Auto-refresh on 401: swap the expired token, then retry once
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const original = error.config;
+    if (error.response?.status === 401 && !original._retry) {
+      original._retry = true;
+      const refreshToken = localStorage.getItem('starverse_refresh');
+      if (refreshToken) {
+        try {
+          const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, { token: refreshToken });
+          const newToken: string = data.accessToken;
+          localStorage.setItem('starverse_token', newToken);
+          setToken(newToken);
+          original.headers.Authorization = `Bearer ${newToken}`;
+          return api(original);
+        } catch {
+          // Refresh also failed — clear session and go to login
+          localStorage.removeItem('starverse_token');
+          localStorage.removeItem('starverse_refresh');
+          localStorage.removeItem('starverse_user');
+          setToken('');
+          window.location.href = '/login';
+        }
+      } else {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

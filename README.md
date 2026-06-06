@@ -1,4 +1,4 @@
-# Mufasa Express Courier Platform
+# Starverse Express Courier Platform
 
 Enterprise-grade courier and logistics software for Zimbabwe and Africa.
 

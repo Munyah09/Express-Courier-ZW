@@ -54,7 +54,7 @@ function ManifestDetail({ manifestId, onBack }: { manifestId: string; onBack: ()
           </span>
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
+        <div className="mt-4 grid grid-cols-1 gap-4 text-sm sm:grid-cols-3">
           <div>
             <p className="text-xs text-slate-500">Route</p>
             <p className="font-medium text-slate-900">{manifest.route?.name || 'N/A'}</p>

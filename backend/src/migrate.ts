@@ -13,7 +13,7 @@ import path from 'path';
 import { supabase } from './lib/supabase';
 
 async function main() {
-  console.log('🚀 Starting Mufasa Express database migration...\n');
+  console.log('🚀 Starting Starverse Express database migration...\n');
 
   try {
     // Read schema from file

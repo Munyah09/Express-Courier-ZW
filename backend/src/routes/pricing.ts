@@ -56,7 +56,8 @@ router.get('/calculate', (req, res) => {
   let subtotal = base * weightMult;
 
   // Delivery type surcharge
-  if (deliveryType === 'home') subtotal += 1.50;
+  if (deliveryType === 'home')          subtotal += 1.50;
+  if (deliveryType === 'bike_delivery') subtotal = 3.00 * weightMult; // flat local rate
 
   // Fragile surcharge
   const fragileSurcharge = fragile === 'true' ? subtotal * 0.15 : 0;

@@ -15,7 +15,7 @@ export interface CreateParcelInput {
   collectionPointId?: string;
   branchId?: string;
   deliveryLocation?: string;
-  deliveryType?: 'home' | 'collection_point' | 'intercity';
+  deliveryType?: 'home' | 'collection_point' | 'intercity' | 'bike_delivery';
   paymentMethod?: 'cash' | 'ecocash' | 'swipe' | 'zipit' | 'account';
   fragile?: boolean;
   requiresSignature?: boolean;
@@ -40,33 +40,45 @@ export const parcelService = {
   async createParcel(input: CreateParcelInput) {
     const trackingNumber = this.generateTrackingNumber();
 
+    // Build extended metadata — stored in notes until DB migration adds dedicated columns
+    const meta: Record<string, any> = {};
+    if (input.deliveryType)      meta.delivery_type       = input.deliveryType;
+    if (input.paymentMethod)     meta.payment_method      = input.paymentMethod;
+    if (input.deliveryCharge)    meta.delivery_charge     = input.deliveryCharge;
+    if (input.pickupLandmark)    meta.pickup_landmark     = input.pickupLandmark;
+    if (input.deliveryLandmark)  meta.delivery_landmark   = input.deliveryLandmark;
+    if (input.fragile)           meta.fragile             = input.fragile;
+    if (input.requiresSignature) meta.requires_signature  = input.requiresSignature;
+    if (input.deliveryZone)      meta.delivery_zone       = input.deliveryZone;
+
+    const metaSuffix = Object.keys(meta).length
+      ? `\n---\n${JSON.stringify(meta)}`
+      : '';
+
     const { data, error } = await db
       .from('parcels')
       .insert({
-        tracking_number: trackingNumber,
-        sender_id: input.senderId,
-        receiver_id: input.receiverId,
-        weight: input.weight,
-        dimensions: input.dimensions,
-        declared_value: input.declaredValue,
-        insurance_amount: input.insuranceAmount,
+        tracking_number:     trackingNumber,
+        sender_id:           input.senderId,
+        receiver_id:         input.receiverId,
+        weight:              input.weight,
+        dimensions:          input.dimensions,
+        declared_value:      input.declaredValue,
+        insurance_amount:    input.insuranceAmount,
         collection_point_id: input.collectionPointId,
-        branch_id: input.branchId,
-        delivery_type: input.deliveryType,
-        payment_method: input.paymentMethod,
-        fragile: input.fragile ?? false,
-        requires_signature: input.requiresSignature ?? false,
-        delivery_charge: input.deliveryCharge ?? null,
-        delivery_zone: input.deliveryZone ?? null,
-        pickup_landmark: input.pickupLandmark ?? null,
-        delivery_landmark: input.deliveryLandmark ?? null,
-        status: 'Accepted',
-        notes: input.notes
+        branch_id:           input.branchId,
+        status:              'Accepted',
+        notes:               (input.notes || '') + metaSuffix || null,
       })
       .select()
       .single();
 
     if (error) throw error;
+
+    // Attach extended fields to returned object so frontend can use them
+    if (data && Object.keys(meta).length) {
+      Object.assign(data, meta);
+    }
 
     // Log initial acceptance event
     await this.recordParcelEvent(data.id, 'Accepted', 'Parcel accepted into system');

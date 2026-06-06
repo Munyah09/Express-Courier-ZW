@@ -31,7 +31,7 @@ function StatCard({ label, value, color, icon }: { label: string; value: number 
         <p className="text-sm font-medium opacity-80">{label}</p>
         <span className="text-xl opacity-70">{icon}</span>
       </div>
-      <p className="mt-3 text-4xl font-bold tracking-tight">{value}</p>
+      <p className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{value}</p>
     </div>
   );
 }
@@ -86,7 +86,7 @@ export function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {statCards.map((s) => (
           <StatCard key={s.label} {...s} value={isLoading ? '...' : s.value} />
         ))}
@@ -112,16 +112,16 @@ export function DashboardPage() {
                 <p className="py-6 text-center text-sm text-slate-400">No shipments yet</p>
               ) : (
                 (stats?.recentParcels ?? []).map((parcel: any) => (
-                  <div key={parcel.id} className="flex items-center justify-between py-3">
-                    <div>
-                      <p className="font-mono text-sm font-medium text-slate-900">{parcel.tracking_number}</p>
-                      <p className="text-xs text-slate-500">
+                  <div key={parcel.id} className="flex items-center justify-between gap-3 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate font-mono text-sm font-medium text-slate-900">{parcel.tracking_number}</p>
+                      <p className="truncate text-xs text-slate-500">
                         {parcel.sender?.first_name} {parcel.sender?.last_name}
                         &nbsp;&middot;&nbsp;
                         {new Date(parcel.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[parcel.status] ?? 'bg-slate-100 text-slate-600'}`}>
+                    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[parcel.status] ?? 'bg-slate-100 text-slate-600'}`}>
                       {parcel.status}
                     </span>
                   </div>
@@ -134,7 +134,7 @@ export function DashboardPage() {
         {/* Quick Actions */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-slate-900">Quick Actions</h2>
-          <div className="grid gap-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <QuickAction to="/create" label="Create Shipment" icon="📦" desc="Register a new parcel" />
             <QuickAction to="/scan" label="Scan Parcel" icon="🔲" desc="Log scan event on a parcel" />
             <QuickAction to="/tracking" label="Track Parcel" icon="📍" desc="Look up a parcel by tracking number" />

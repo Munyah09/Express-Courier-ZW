@@ -1,169 +1,148 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import api from '../lib/api';
-
-const ZW_CITIES = ['Harare','Bulawayo','Mutare','Gweru','Kwekwe','Kadoma','Masvingo','Chinhoyi','Bindura','Marondera','Chegutu','Zvishavane','Redcliff','Beitbridge','Kariba','Victoria Falls','Hwange','Plumtree','Rusape','Chipinge','Chiredzi'];
-
-function usePriceCalc(params: Record<string, string>) {
-  return useQuery({
-    queryKey: ['pricing', params],
-    queryFn: async () => { const { data } = await api.get('/pricing/calculate', { params }); return data.data; },
-    enabled: !!params.origin && !!params.destination && !!params.weight,
-  });
-}
-
-const SEL = 'w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100';
-const INP = `${SEL}`;
-
 export function PricingPage() {
-  const [origin, setOrigin] = useState('Harare');
-  const [destination, setDestination] = useState('Bulawayo');
-  const [weight, setWeight] = useState('1');
-  const [deliveryType, setDeliveryType] = useState('home');
-  const [insurance, setInsurance] = useState('0');
-  const [fragile, setFragile] = useState(false);
-  const [debounced, setDebounced] = useState({ origin, destination, weight, deliveryType, insurance, fragile: fragile.toString() });
-
-  useEffect(() => {
-    const t = setTimeout(() => setDebounced({ origin, destination, weight, deliveryType, insurance, fragile: fragile.toString() }), 400);
-    return () => clearTimeout(t);
-  }, [origin, destination, weight, deliveryType, insurance, fragile]);
-
-  const { data: result, isLoading } = usePriceCalc(debounced);
-  const bd = result?.breakdown;
-
   return (
-    <div className="space-y-5 max-w-3xl">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Pricing Calculator</h1>
-        <p className="text-sm text-slate-500 mt-0.5">Get an instant quote for any shipment</p>
+        <h1 className="text-2xl font-semibold text-slate-900">Pricing Advisor</h1>
+        <p className="text-sm text-slate-500 mt-0.5">
+          All prices are set manually per shipment. Use this page as a reference guide — not a fixed rate card.
+          Many factors influence the final price: route, urgency, parcel type, fuel, season, and customer relationship.
+        </p>
+      </div>
+
+      {/* Advisory banner */}
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 flex gap-3">
+        <span className="text-2xl mt-0.5">💡</span>
+        <div>
+          <p className="font-semibold text-amber-900">Custom Pricing Model</p>
+          <p className="text-sm text-amber-700 mt-1 leading-relaxed">
+            Starverse Express uses fully negotiated pricing. No fixed rates are applied automatically.
+            When creating a shipment, enter the agreed delivery charge in the "Delivery Charge" field.
+            The figures below are suggested starting points — not binding rates.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        {/* Inputs */}
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-          <h2 className="font-semibold text-slate-900">Shipment Details</h2>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">From (Origin)</label>
-              <select value={origin} onChange={e => setOrigin(e.target.value)} className={SEL}>
-                {ZW_CITIES.map(c => <option key={c}>{c}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">To (Destination)</label>
-              <select value={destination} onChange={e => setDestination(e.target.value)} className={SEL}>
-                {ZW_CITIES.map(c => <option key={c}>{c}</option>)}
-              </select>
-            </div>
+        {/* Route distance guide */}
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="font-semibold text-slate-900 mb-4">🗺️ Route Distance Categories</h2>
+          <div className="space-y-3">
+            {[
+              { label: 'Same City / Local', desc: 'e.g. Harare CBD to Chitungwiza', range: '$1 – $5', icon: '🏙️', color: 'bg-green-50 border-green-200' },
+              { label: 'Short Intercity', desc: 'e.g. Harare to Marondera, Gweru to Kwekwe', range: '$5 – $12', icon: '🛣️', color: 'bg-blue-50 border-blue-200' },
+              { label: 'Medium Intercity', desc: 'e.g. Harare to Gweru, Bulawayo to Masvingo', range: '$10 – $20', icon: '🚚', color: 'bg-purple-50 border-purple-200' },
+              { label: 'Long Intercity', desc: 'e.g. Harare to Bulawayo, Harare to Mutare', range: '$15 – $30', icon: '🗺️', color: 'bg-orange-50 border-orange-200' },
+              { label: 'Cross-Country', desc: 'e.g. Harare to Beitbridge, Harare to Victoria Falls', range: '$25 – $50+', icon: '🏁', color: 'bg-red-50 border-red-200' },
+            ].map(r => (
+              <div key={r.label} className={`flex items-center justify-between rounded-2xl border px-4 py-3 ${r.color}`}>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">{r.icon}</span>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">{r.label}</p>
+                    <p className="text-xs text-slate-500">{r.desc}</p>
+                  </div>
+                </div>
+                <span className="text-sm font-bold text-slate-800 shrink-0 ml-3">{r.range}</span>
+              </div>
+            ))}
           </div>
+          <p className="mt-3 text-xs text-slate-400">Suggested ranges based on typical market rates. Adjust for weight, urgency, and customer agreement.</p>
+        </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">Weight (kg)</label>
-            <input type="number" step="0.1" min="0.1" value={weight} onChange={e => setWeight(e.target.value)} className={INP} />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">Delivery Type</label>
-            <div className="grid grid-cols-3 gap-2">
+        {/* Weight & type adjustments */}
+        <div className="space-y-5">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="font-semibold text-slate-900 mb-4">⚖️ Weight Adjustments</h2>
+            <div className="space-y-2">
               {[
-                { v: 'home', label: 'Home', icon: '🏠' },
-                { v: 'collection_point', label: 'Collection', icon: '📍' },
-                { v: 'intercity', label: 'Intercity', icon: '🚚' },
-              ].map(opt => (
-                <button key={opt.v} type="button" onClick={() => setDeliveryType(opt.v)}
-                  className={`rounded-xl border-2 p-3 text-center text-xs font-semibold transition-all ${deliveryType === opt.v ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}>
-                  <div className="text-xl mb-1">{opt.icon}</div>
-                  {opt.label}
-                </button>
+                ['Under 1 kg', 'Base price — no adjustment'],
+                ['1–5 kg', 'Add 30–50% to base'],
+                ['5–10 kg', 'Add 70–100% to base'],
+                ['10–25 kg', 'Double to triple base'],
+                ['25–50 kg', 'Negotiate per trip'],
+                ['50+ kg', 'Bulk rate — discuss with customer'],
+              ].map(([range, note]) => (
+                <div key={range} className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-2.5 text-sm">
+                  <span className="font-semibold text-slate-900">{range}</span>
+                  <span className="text-slate-500 text-xs">{note}</span>
+                </div>
               ))}
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">Declared Value (USD) — for insurance</label>
-            <input type="number" step="1" min="0" value={insurance} onChange={e => setInsurance(e.target.value)} placeholder="0" className={INP} />
-          </div>
-
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" checked={fragile} onChange={e => setFragile(e.target.checked)} className="h-4 w-4 rounded accent-brand-500" />
-            <span className="text-sm font-medium text-slate-700">⚠️ Fragile cargo (+15%)</span>
-          </label>
-        </div>
-
-        {/* Quote */}
-        <div className="rounded-3xl border-2 border-brand-400 bg-gradient-to-br from-brand-50 to-white p-6 shadow-sm flex flex-col">
-          <h2 className="font-semibold text-slate-900 mb-4">Your Quote</h2>
-
-          <div className="flex-1">
-            <div className="mb-6 text-center py-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">{origin} → {destination}</p>
-              {isLoading ? (
-                <div className="h-14 w-32 mx-auto animate-pulse rounded-2xl bg-slate-100" />
-              ) : (
-                <p className="text-6xl font-black text-brand-600 tracking-tight">
-                  ${bd?.total ?? '—'}
-                </p>
-              )}
-              <p className="text-sm text-slate-400 mt-1">{weight} kg · {deliveryType.replace('_', ' ')}</p>
-            </div>
-
-            {bd && (
-              <div className="space-y-2 rounded-2xl bg-white border border-slate-100 p-4">
-                {[
-                  ['Base Rate', `$${bd.baseRate}`],
-                  ['Weight Multiplier', `×${bd.weightMultiplier}`],
-                  ['Subtotal', `$${bd.subtotal}`],
-                  bd.fragileSurcharge > 0 && ['Fragile Surcharge', `$${bd.fragileSurcharge}`],
-                  bd.insuranceFee > 0 && ['Insurance (2%)', `$${bd.insuranceFee}`],
-                ].filter(Boolean).map(([label, value]: any) => (
-                  <div key={label} className="flex justify-between text-sm">
-                    <span className="text-slate-500">{label}</span>
-                    <span className="font-semibold text-slate-900">{value}</span>
-                  </div>
-                ))}
-                <div className="border-t border-slate-200 pt-2 flex justify-between text-base font-bold">
-                  <span>Total</span>
-                  <span className="text-brand-700">${bd.total} USD</span>
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="font-semibold text-slate-900 mb-4">📦 Special Handling Surcharges</h2>
+            <div className="space-y-2">
+              {[
+                ['Fragile / Breakable', '+15–20% of base'],
+                ['Insurance Cover', '2–3% of declared value'],
+                ['Home Delivery (urban)', 'Add $1–$3'],
+                ['Bike / Last Mile', 'Custom — $2–$8 typical'],
+                ['Urgent / Same Day', '+30–50% premium'],
+                ['Mushika Shika / Kombi', 'Negotiate per seat/package'],
+              ].map(([type, note]) => (
+                <div key={type} className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-2.5 text-sm">
+                  <span className="font-semibold text-slate-900">{type}</span>
+                  <span className="text-slate-500 text-xs">{note}</span>
                 </div>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-5 space-y-2">
-            <a href="/create" className="block w-full rounded-2xl bg-brand-500 py-3 text-center text-sm font-bold text-white hover:bg-brand-600 transition-colors">
-              📦 Ship Now at This Price
-            </a>
-            <p className="text-center text-xs text-slate-400">Prices in USD · Subject to zone confirmation</p>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Rate card reference */}
+      {/* Zimbabwe route quick reference */}
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="font-semibold text-slate-900 mb-4">Rate Reference</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            { label: 'Local (same city)', from: '$2.00', desc: 'Up to 1 kg base rate', icon: '🏙️' },
-            { label: 'Intercity', from: '$7.00', desc: 'Major cities, up to 1 kg', icon: '🚚' },
-            { label: 'Home Delivery', from: '+$1.50', desc: 'Added to all home deliveries', icon: '🏠' },
-          ].map(r => (
-            <div key={r.label} className="rounded-2xl bg-slate-50 p-4">
-              <p className="text-2xl mb-2">{r.icon}</p>
-              <p className="font-semibold text-slate-900">{r.label}</p>
-              <p className="text-xl font-bold text-brand-600">{r.from}</p>
-              <p className="text-xs text-slate-500 mt-1">{r.desc}</p>
-            </div>
-          ))}
+        <h2 className="font-semibold text-slate-900 mb-4">🇿🇼 Zimbabwe Route Quick Reference</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-100">
+                <th className="text-left py-2 px-3 text-xs font-semibold uppercase text-slate-500">Route</th>
+                <th className="text-left py-2 px-3 text-xs font-semibold uppercase text-slate-500">Via</th>
+                <th className="text-left py-2 px-3 text-xs font-semibold uppercase text-slate-500">Approx. Distance</th>
+                <th className="text-left py-2 px-3 text-xs font-semibold uppercase text-slate-500">Suggested Range</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {[
+                ['Harare → Zvishavane', 'Masvingo Road', '~290 km', '$12–$22'],
+                ['Harare → Zvishavane', 'Bulawayo Road (via Gweru)', '~330 km', '$14–$25'],
+                ['Harare → Bulawayo', 'Midlands (Norton, Kwekwe, Gweru)', '~440 km', '$18–$30'],
+                ['Harare → Mutare', 'Eastern Highlands', '~260 km', '$12–$20'],
+                ['Harare → Masvingo', 'Beatrice, Chivhu, Mvuma', '~290 km', '$12–$20'],
+                ['Harare → Beitbridge', 'Masvingo, Ngundu', '~580 km', '$25–$45'],
+                ['Harare → Victoria Falls', 'Bulawayo, Hwange', '~900 km', '$40–$70'],
+                ['Harare → Kariba', 'Chinhoyi, Karoi', '~365 km', '$15–$28'],
+                ['Bulawayo → Beitbridge', 'Gwanda, West Nicholson', '~320 km', '$14–$25'],
+                ['Mutare → Chipinge', 'Skyline Junction', '~160 km', '$8–$15'],
+              ].map(([route, via, dist, range]) => (
+                <tr key={route + via} className="hover:bg-slate-50">
+                  <td className="py-2.5 px-3 font-medium text-slate-900">{route}</td>
+                  <td className="py-2.5 px-3 text-slate-500">{via}</td>
+                  <td className="py-2.5 px-3 text-slate-500">{dist}</td>
+                  <td className="py-2.5 px-3 font-semibold text-brand-700">{range}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <div className="mt-4 grid gap-3 sm:grid-cols-4 text-xs text-slate-600">
-          {[['0–1 kg','×1.0'],['1–5 kg','×1.4'],['5–10 kg','×1.8'],['10–25 kg','×2.5'],['25–50 kg','×3.5'],['50+ kg','×5.0']].map(([range, mult]) => (
-            <div key={range} className="flex justify-between rounded-lg bg-slate-100 px-3 py-2">
-              <span>{range}</span><span className="font-bold text-slate-800">{mult}</span>
-            </div>
-          ))}
-        </div>
+        <p className="mt-3 text-xs text-slate-400">
+          All ranges are for a standard parcel under 5 kg. Heavy or bulky items should be negotiated separately.
+          These are starting-point suggestions only — the agreed price always takes precedence.
+        </p>
+      </div>
+
+      {/* CTA */}
+      <div className="rounded-3xl border-2 border-brand-200 bg-brand-50 p-6 text-center">
+        <p className="text-sm font-semibold text-brand-900 mb-1">Ready to create a shipment?</p>
+        <p className="text-xs text-brand-700 mb-4">Enter the agreed delivery charge when creating the parcel.</p>
+        <a
+          href="/create"
+          className="inline-block rounded-2xl bg-brand-500 px-8 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors"
+        >
+          📦 Create Shipment
+        </a>
       </div>
     </div>
   );

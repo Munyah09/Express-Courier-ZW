@@ -1,7 +1,7 @@
 # System Architecture
 
 ## 1. Overview
-The Mufasa Express platform is built as a modular cloud-ready application with separate frontend and backend services, a PostgreSQL database, S3-compatible object storage, and a realtime socket layer for tracking updates.
+The Starverse Express platform is built as a modular cloud-ready application with separate frontend and backend services, a PostgreSQL database, S3-compatible object storage, and a realtime socket layer for tracking updates.
 
 ### High-level components
 - **Frontend**: React + Vite + Tailwind, mobile-first operations portal for staff and customers.

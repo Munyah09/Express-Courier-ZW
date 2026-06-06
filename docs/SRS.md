@@ -3,7 +3,7 @@
 ## 1. Introduction
 
 ### 1.1 Purpose
-This document defines the scope, features, requirements, and architecture of the Mufasa Express Courier platform. The system is designed to meet the needs of Zimbabwean and African logistics operators, with mobile-first usability, landmark-based addresses, community pick-up points, WhatsApp integration, franchise scaling, and secure parcel auditing.
+This document defines the scope, features, requirements, and architecture of the Starverse Express Courier platform. The system is designed to meet the needs of Zimbabwean and African logistics operators, with mobile-first usability, landmark-based addresses, community pick-up points, WhatsApp integration, franchise scaling, and secure parcel auditing.
 
 ### 1.2 Scope
 The platform will support:

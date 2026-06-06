@@ -18,9 +18,9 @@ const STATUS_COLORS: Record<string, string> = {
 
 function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
   return (
-    <div className="flex items-start justify-between py-2.5 border-b border-slate-50 last:border-0">
-      <span className="text-xs font-medium text-slate-500 w-32 shrink-0">{label}</span>
-      <span className="text-sm text-slate-900 text-right">{value ?? '—'}</span>
+    <div className="flex items-start justify-between gap-3 py-2.5 border-b border-slate-50 last:border-0">
+      <span className="text-xs font-medium text-slate-500 w-28 shrink-0">{label}</span>
+      <span className="text-sm text-slate-900 text-right break-words min-w-0">{value ?? '—'}</span>
     </div>
   );
 }
@@ -142,7 +142,7 @@ export function ParcelDetailPage() {
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Link
             to={`/tracking?q=${parcel.tracking_number}`}
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
@@ -207,10 +207,10 @@ export function ParcelDetailPage() {
 
         {/* OTP Delivery Verification */}
         {(parcel.status === 'Out For Delivery' || parcel.status === 'In Transit') && (
-          <div className="rounded-3xl border-2 border-brand-400 bg-brand-50 p-6 shadow-sm">
+          <div className="rounded-3xl border-2 border-brand-400 bg-brand-50 p-5 shadow-sm lg:col-span-3">
             <h2 className="font-semibold text-slate-900 mb-1">OTP Delivery Verification</h2>
             <p className="text-sm text-slate-500 mb-4">Generate an OTP to send to the receiver, then verify on handoff to confirm delivery.</p>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2 max-w-lg">
               <div className="space-y-2">
                 <button onClick={handleGenerateOtp} disabled={otpLoading} className="w-full rounded-xl bg-brand-500 py-2.5 text-sm font-bold text-white hover:bg-brand-600 disabled:opacity-60">
                   {otpLoading ? 'Generating…' : '📲 Generate & Send OTP'}

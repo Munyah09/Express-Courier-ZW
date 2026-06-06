@@ -74,7 +74,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Super Admin (required) ──
   {
     email:      'hello@munya.co.zw',
-    password:   'griezmann17',
+    password:   '@@Griezmann177#$',
     first_name: 'Munyaradzi',
     last_name:  'Muzvidziwa',
     phone:      '+263771000001',
@@ -82,16 +82,16 @@ const DEMO_USERS: DemoUser[] = [
   },
   // ── Admin ──
   {
-    email:      'admin@mufasa.co.zw',
+    email:      'admin@Starverse.co.zw',
     password:   'Demo@1234',
     first_name: 'Admin',
-    last_name:  'Mufasa',
+    last_name:  'Starverse',
     phone:      '+263771000002',
     role:       'admin',
   },
   // ── Franchise Owner ──
   {
-    email:      'franchise@mufasa.co.zw',
+    email:      'franchise@Starverse.co.zw',
     password:   'Demo@1234',
     first_name: 'Franchise',
     last_name:  'Owner',
@@ -100,7 +100,7 @@ const DEMO_USERS: DemoUser[] = [
   },
   // ── Branch Manager ──
   {
-    email:      'manager@mufasa.co.zw',
+    email:      'manager@Starverse.co.zw',
     password:   'Demo@1234',
     first_name: 'Branch',
     last_name:  'Manager',
@@ -109,7 +109,7 @@ const DEMO_USERS: DemoUser[] = [
   },
   // ── Driver ──
   {
-    email:      'driver@mufasa.co.zw',
+    email:      'driver@Starverse.co.zw',
     password:   'Demo@1234',
     first_name: 'Tendai',
     last_name:  'Driver',
@@ -118,7 +118,7 @@ const DEMO_USERS: DemoUser[] = [
   },
   // ── Shop Assistant / Agent ──
   {
-    email:      'agent@mufasa.co.zw',
+    email:      'agent@Starverse.co.zw',
     password:   'Demo@1234',
     first_name: 'Chido',
     last_name:  'Agent',
@@ -127,7 +127,7 @@ const DEMO_USERS: DemoUser[] = [
   },
   // ── Clerk ──
   {
-    email:      'clerk@mufasa.co.zw',
+    email:      'clerk@Starverse.co.zw',
     password:   'Demo@1234',
     first_name: 'Rudo',
     last_name:  'Clerk',
@@ -136,7 +136,7 @@ const DEMO_USERS: DemoUser[] = [
   },
   // ── Accountant ──
   {
-    email:      'accounts@mufasa.co.zw',
+    email:      'accounts@Starverse.co.zw',
     password:   'Demo@1234',
     first_name: 'Finance',
     last_name:  'Controller',
@@ -199,12 +199,198 @@ async function upsertUsers(roleMap: Record<string, string>) {
   }
 }
 
+// ── Zimbabwe Routes ───────────────────────────────────────────────────────────
+
+interface RouteEntry {
+  name: string;
+  origin: string;
+  destination: string;
+  notes: string;
+}
+
+const ROUTES: RouteEntry[] = [
+  // ── Harare → Zvishavane (user's personal favourite) ──
+  {
+    name: 'Harare → Zvishavane (Via Gweru)',
+    origin: 'Harare', destination: 'Zvishavane',
+    notes: 'Stops: Whitehouse/Granary · Norton · Chegutu · Kadoma · Kwekwe · Gweru · Shurugwi · Siboza · Zvishavane · Mberengwa (terminus)',
+  },
+  {
+    name: 'Harare → Zvishavane (Via Masvingo)',
+    origin: 'Harare', destination: 'Zvishavane',
+    notes: 'Stops: Beatrice · Furtherstone · Chivhu · Mvuma · Chaka · Masvingo · Mashava · Mhandamabwe · Zvishavane',
+  },
+  // ── Harare → Bulawayo ──
+  {
+    name: 'Harare → Bulawayo',
+    origin: 'Harare', destination: 'Bulawayo',
+    notes: 'Stops: Norton · Chegutu · Kadoma · Kwekwe · Gweru · Ngezi · Shangani · Halfway House · Bulawayo',
+  },
+  // ── Harare → Beitbridge ──
+  {
+    name: 'Harare → Beitbridge',
+    origin: 'Harare', destination: 'Beitbridge',
+    notes: 'Stops: Beatrice · Chivhu · Mvuma · Masvingo · Ngundu · Bubi · Rutenga · Beitbridge',
+  },
+  // ── Harare → Mutare ──
+  {
+    name: 'Harare → Mutare',
+    origin: 'Harare', destination: 'Mutare',
+    notes: 'Stops: Marondera · Rusape · Mutare',
+  },
+  // ── Harare → Kariba ──
+  {
+    name: 'Harare → Kariba',
+    origin: 'Harare', destination: 'Kariba',
+    notes: 'Stops: Chinhoyi · Karoi · Makuti · Siakobvu · Kariba',
+  },
+  // ── Harare → Chirundu ──
+  {
+    name: 'Harare → Chirundu',
+    origin: 'Harare', destination: 'Chirundu',
+    notes: 'Stops: Chinhoyi · Karoi · Makuti · Chirundu (Zimbabwe–Zambia border)',
+  },
+  // ── Harare → Hwange ──
+  {
+    name: 'Harare → Hwange',
+    origin: 'Harare', destination: 'Hwange',
+    notes: 'Stops: Kadoma · Kwekwe · Gweru · Bulawayo · Hwange National Park Gate',
+  },
+  // ── Harare → Nyanga ──
+  {
+    name: 'Harare → Nyanga',
+    origin: 'Harare', destination: 'Nyanga',
+    notes: 'Stops: Marondera · Rusape · Nyanga · Troutbeck Junction',
+  },
+  // ── Harare → Chiredzi ──
+  {
+    name: 'Harare → Chiredzi',
+    origin: 'Harare', destination: 'Chiredzi',
+    notes: 'Stops: Masvingo · Ngundu · Triangle · Chiredzi',
+  },
+  // ── Harare → Chimanimani ──
+  {
+    name: 'Harare → Chimanimani',
+    origin: 'Harare', destination: 'Chimanimani',
+    notes: 'Stops: Marondera · Rusape · Mutare · Wengezi · Skyline Junction · Chimanimani',
+  },
+  // ── Harare → Mbire ──
+  {
+    name: 'Harare → Mbire',
+    origin: 'Harare', destination: 'Mbire',
+    notes: 'Stops: Bindura · Muzarabani · Kairezi · Mbire (remote rural)',
+  },
+  // ── Harare → Bindura ──
+  {
+    name: 'Harare → Bindura',
+    origin: 'Harare', destination: 'Bindura',
+    notes: 'Stops: Mazowe · Bindura',
+  },
+  // ── Harare → Victoria Falls ──
+  {
+    name: 'Harare → Victoria Falls',
+    origin: 'Harare', destination: 'Victoria Falls',
+    notes: 'Stops: Kadoma · Kwekwe · Gweru · Bulawayo · Hwange · Victoria Falls',
+  },
+  // ── Harare → Masvingo ──
+  {
+    name: 'Harare → Masvingo',
+    origin: 'Harare', destination: 'Masvingo',
+    notes: 'Stops: Beatrice · Chivhu · Mvuma · Masvingo (Great Zimbabwe Road)',
+  },
+  // ── Harare → Gweru ──
+  {
+    name: 'Harare → Gweru',
+    origin: 'Harare', destination: 'Gweru',
+    notes: 'Stops: Norton · Chegutu · Kadoma · Kwekwe · Gweru',
+  },
+  // ── Harare → Kwekwe ──
+  {
+    name: 'Harare → Kwekwe',
+    origin: 'Harare', destination: 'Kwekwe',
+    notes: 'Stops: Norton · Chegutu · Kadoma · Kwekwe (Gold City)',
+  },
+  // ── Harare → Kadoma ──
+  {
+    name: 'Harare → Kadoma',
+    origin: 'Harare', destination: 'Kadoma',
+    notes: 'Stops: Norton · Chegutu · Kadoma',
+  },
+  // ── Bulawayo → Beitbridge ──
+  {
+    name: 'Bulawayo → Beitbridge',
+    origin: 'Bulawayo', destination: 'Beitbridge',
+    notes: 'Stops: Gwanda · West Nicholson · Beitbridge',
+  },
+  // ── Bulawayo → Victoria Falls ──
+  {
+    name: 'Bulawayo → Victoria Falls',
+    origin: 'Bulawayo', destination: 'Victoria Falls',
+    notes: 'Stops: Hwange · Deka · Victoria Falls',
+  },
+  // ── Mutare → Chipinge ──
+  {
+    name: 'Mutare → Chipinge',
+    origin: 'Mutare', destination: 'Chipinge',
+    notes: 'Stops: Wengezi · Skyline Junction · Chipinge',
+  },
+  // ── Mutare → Chiredzi ──
+  {
+    name: 'Mutare → Chiredzi',
+    origin: 'Mutare', destination: 'Chiredzi',
+    notes: 'Stops: Wengezi · Chipinge · Hippo Valley · Chiredzi',
+  },
+  // ── Masvingo → Beitbridge ──
+  {
+    name: 'Masvingo → Beitbridge',
+    origin: 'Masvingo', destination: 'Beitbridge',
+    notes: 'Stops: Ngundu · Bubi · Rutenga · Beitbridge',
+  },
+  // ── Harare → Chinhoyi ──
+  {
+    name: 'Harare → Chinhoyi',
+    origin: 'Harare', destination: 'Chinhoyi',
+    notes: 'Stops: Norton · Chinhoyi (Caves Road)',
+  },
+  // ── Harare → Marondera ──
+  {
+    name: 'Harare → Marondera',
+    origin: 'Harare', destination: 'Marondera',
+    notes: 'Stops: Ruwa · Marondera',
+  },
+];
+
+async function upsertRoutes() {
+  console.log('\n🗺️  Seeding Zimbabwe routes...');
+
+  // Fetch existing route names to avoid duplicates
+  const { data: existing } = await supabase.from('routes').select('name');
+  const existingNames = new Set((existing ?? []).map((r: any) => r.name));
+
+  let created = 0;
+  let skipped = 0;
+  for (const route of ROUTES) {
+    if (existingNames.has(route.name)) {
+      // Update notes/status in case they changed
+      await supabase.from('routes').update({ notes: route.notes, status: 'active' }).eq('name', route.name);
+      console.log(`  ~ (updated) ${route.name}`);
+      skipped++;
+    } else {
+      const { error } = await supabase.from('routes').insert({ ...route, status: 'active' });
+      if (error) console.error(`  ✗ ${route.name}:`, error.message);
+      else { console.log(`  ✓ ${route.origin} → ${route.destination}`); created++; }
+    }
+  }
+  console.log(`  ${created} created, ${skipped} already existed (updated).`);
+}
+
 async function main() {
-  console.log('🦁 Mufasa Express — Database Seeder\n' + '─'.repeat(45));
+  console.log('🦁 Starverse Express — Database Seeder\n' + '─'.repeat(45));
 
   const roleMap = await upsertRoles();
   await upsertPermissions();
   await upsertUsers(roleMap);
+  await upsertRoutes();
 
   console.log('\n' + '─'.repeat(45));
   console.log('✅ Seed complete!\n');

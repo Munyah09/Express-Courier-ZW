@@ -35,8 +35,8 @@ export function ParcelLabelPage() {
         {/* Header */}
         <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold tracking-widest uppercase opacity-60">Mufasa Express Courier</p>
-            <p className="text-lg font-black tracking-tight">mufasa.co.zw</p>
+            <p className="text-xs font-bold tracking-widest uppercase opacity-60">Starverse Express Courier</p>
+            <p className="text-lg font-black tracking-tight">Starverse.co.zw</p>
           </div>
           <div className="text-right">
             <p className="text-xs opacity-60">Created</p>
@@ -85,7 +85,7 @@ export function ParcelLabelPage() {
         </div>
 
         {/* Parcel details row */}
-        <div className="grid grid-cols-4 divide-x divide-slate-200 border-b-2 border-slate-900 text-center text-xs">
+        <div className="grid grid-cols-2 divide-x divide-y divide-slate-200 border-b-2 border-slate-900 text-center text-xs sm:grid-cols-4 sm:divide-y-0">
           {[
             ['Weight', parcel.weight ? `${parcel.weight} kg` : '—'],
             ['Status', parcel.status],
@@ -100,8 +100,8 @@ export function ParcelLabelPage() {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 flex items-center justify-between text-[10px] text-slate-400 bg-slate-50">
-          <span>Scan QR or visit mufasa.co.zw/track to track this parcel</span>
+        <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-400 bg-slate-50">
+          <span>Scan QR or visit Starverse.co.zw/track to track this parcel</span>
           <span className="font-mono">{parcel.id.slice(0, 8).toUpperCase()}</span>
         </div>
       </div>

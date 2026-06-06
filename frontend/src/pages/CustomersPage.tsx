@@ -48,7 +48,7 @@ function CreateCustomerModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-slate-700">First Name *</label>
               <input
@@ -66,7 +66,7 @@ function CreateCustomerModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-slate-700">Phone *</label>
               <input

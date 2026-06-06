@@ -1,5 +1,5 @@
 -- ================================================================
--- Mufasa Express Courier — Full Database Setup
+-- Starverse Express Courier — Full Database Setup
 -- Run this ONCE in: Supabase → SQL Editor → New Query
 -- Safe to re-run (uses IF NOT EXISTS / ON CONFLICT)
 -- ================================================================
@@ -400,7 +400,7 @@ ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description;
 
 -- ── Users (bcrypt cost 12 hashes) ────────────────────────────
 -- hello@munya.co.zw      → griezmann17
--- *@mufasa.co.zw         → Demo@1234
+-- *@Starverse.co.zw         → Demo@1234
 
 INSERT INTO users (email, password_hash, first_name, last_name, phone, role_id, is_active) VALUES
   (
@@ -410,43 +410,43 @@ INSERT INTO users (email, password_hash, first_name, last_name, phone, role_id, 
     (SELECT id FROM roles WHERE name='super_admin'), true
   ),
   (
-    'admin@mufasa.co.zw',
+    'admin@Starverse.co.zw',
     '$2a$12$dM.b.UiD.ktWTCjk.aL0AeSfCvMoOT1meV8RfEndxErppRp/Ybpkm',
-    'Admin','Mufasa','+263771000002',
+    'Admin','Starverse','+263771000002',
     (SELECT id FROM roles WHERE name='admin'), true
   ),
   (
-    'franchise@mufasa.co.zw',
+    'franchise@Starverse.co.zw',
     '$2a$12$1EzJhcYJP7FsCjKF5I67pOuosTyJe6jsvNFa4tz5UhhAt6i2za3Wa',
     'Franchise','Owner','+263771000003',
     (SELECT id FROM roles WHERE name='franchise_owner'), true
   ),
   (
-    'manager@mufasa.co.zw',
+    'manager@Starverse.co.zw',
     '$2a$12$AicECnQkIYfNS5yCFdm48ejPGyipPxJSHOJS7LV7SMUp8Gbq/KUnK',
     'Branch','Manager','+263771000004',
     (SELECT id FROM roles WHERE name='branch_manager'), true
   ),
   (
-    'driver@mufasa.co.zw',
+    'driver@Starverse.co.zw',
     '$2a$12$XILnPPeir99doeCBmQ8h5uBvV9uh1BSzVY.eR5CoJbUEtE7K5Z7my',
     'Tendai','Mhere','+263771000005',
     (SELECT id FROM roles WHERE name='driver'), true
   ),
   (
-    'agent@mufasa.co.zw',
+    'agent@Starverse.co.zw',
     '$2a$12$B/YWkcDVvL3UqW/9reyoDuuktZXiZf.65WmYcEBhVBU8EHX6V7hvW',
     'Chido','Mupfururi','+263771000006',
     (SELECT id FROM roles WHERE name='shop_assistant'), true
   ),
   (
-    'clerk@mufasa.co.zw',
+    'clerk@Starverse.co.zw',
     '$2a$12$Xlfia5H8LC9ULTEtM99x9.CLNEMiF3a57GOXSsk3q5.0D1WFmfFWC',
     'Rudo','Makoni','+263771000007',
     (SELECT id FROM roles WHERE name='clerk'), true
   ),
   (
-    'accounts@mufasa.co.zw',
+    'accounts@Starverse.co.zw',
     '$2a$12$cyxGcch16LNuF.TDT.B9QuH..ciB1iZx1KtEGAjoAgwiCYGZChxDO',
     'Finance','Controller','+263771000008',
     (SELECT id FROM roles WHERE name='accountant'), true

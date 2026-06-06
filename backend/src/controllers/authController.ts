@@ -43,7 +43,7 @@ export const signIn = async (req: Request, res: Response) => {
   };
 
   const accessToken = jwt.sign({ user }, JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '15m'
+    expiresIn: process.env.JWT_EXPIRES_IN || '8h'
   } as jwt.SignOptions);
   const refreshToken = jwt.sign({ user }, REFRESH_SECRET, {
     expiresIn: '30d'

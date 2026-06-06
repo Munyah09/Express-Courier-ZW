@@ -163,7 +163,7 @@ export function HandoverPage() {
   const INP = `${SEL} placeholder-slate-400`;
 
   return (
-    <div className="mx-auto max-w-xl space-y-5">
+    <div className="mx-auto max-w-3xl space-y-5">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">Parcel Handover</h1>
         <p className="mt-0.5 text-sm text-slate-500">Record a signed transfer of custody between handlers</p>
@@ -377,13 +377,116 @@ export function HandoverPage() {
             <div><p className="text-xs text-slate-400">Type</p><p className="font-medium">{TRANSFER_TYPES.find(t => t.v === transferType)?.label}</p></div>
             <div><p className="text-xs text-slate-400">Condition</p><p className="font-medium">{CONDITION_OPTS.find(c => c.v === condition)?.label}</p></div>
           </div>
-          <div className="flex gap-3">
-            <button onClick={reset} className="flex-1 rounded-2xl bg-brand-500 py-3 text-sm font-bold text-white hover:bg-brand-600">
-              Next Parcel
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={async () => {
+                const { jsPDF } = await import('jspdf');
+                const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+                const pageW = doc.internal.pageSize.getWidth();
+                const pageH = doc.internal.pageSize.getHeight();
+                const now = new Date().toLocaleString('en-ZW');
+                const colW = (pageW - 40) / 2;
+                const col1 = 15, col2 = col1 + colW + 10;
+
+                // Header
+                doc.setFillColor(34, 197, 94);
+                doc.rect(0, 0, pageW, 18, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(13);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Starverse Express Courier — HANDOVER DOCUMENT', pageW / 2, 8, { align: 'center' });
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Printed: ${now}`, pageW / 2, 14, { align: 'center' });
+
+                // Parcel info bar
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`Tracking: ${parcel?.tracking_number ?? '—'}`, 15, 24);
+                doc.text(`Transfer Type: ${TRANSFER_TYPES.find(t => t.v === transferType)?.label ?? '—'}`, pageW / 2, 24, { align: 'center' });
+                doc.text(`Condition: ${CONDITION_OPTS.find(c => c.v === condition)?.label ?? '—'}`, pageW - 15, 24, { align: 'right' });
+                doc.setDrawColor(200, 200, 200);
+                doc.line(15, 27, pageW - 15, 27);
+
+                // Two-column handover blocks
+                const drawBlock = (x: number, colIdx: number) => {
+                  const baseY = 33;
+                  doc.setFillColor(248, 250, 252);
+                  doc.roundedRect(x, baseY, colW, pageH - 43, 3, 3, 'F');
+                  doc.setDrawColor(220, 220, 220);
+                  doc.roundedRect(x, baseY, colW, pageH - 43, 3, 3, 'S');
+
+                  let y = baseY + 8;
+                  doc.setFontSize(9);
+                  doc.setFont('helvetica', 'bold');
+                  doc.setTextColor(34, 197, 94);
+                  doc.text(`HANDOVER ${colIdx + 1}`, x + colW / 2, y, { align: 'center' });
+                  doc.setTextColor(0, 0, 0);
+
+                  y += 7;
+                  const fields = [
+                    ['Handed By', colIdx === 0 ? `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() : ''],
+                    ['To (Receiver)', colIdx === 0 ? (drivers as any[]).find((d: any) => d.id === toUserId)?.first_name || '—' : ''],
+                    ['Time', colIdx === 0 ? now : ''],
+                    ['From Location', colIdx === 0 ? fromLocation : ''],
+                    ['To Location', colIdx === 0 ? (toLocation || '—') : ''],
+                  ];
+
+                  for (const [label, value] of fields) {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(7);
+                    doc.text(label + ':', x + 5, y);
+                    doc.setFont('helvetica', 'normal');
+                    const lines = doc.splitTextToSize(value || '_________________________', colW - 12);
+                    doc.text(lines, x + 5, y + 4);
+                    y += 4 + lines.length * 4 + 2;
+                  }
+
+                  // Signature boxes
+                  y += 3;
+                  doc.setFont('helvetica', 'bold');
+                  doc.setFontSize(7);
+                  doc.text("Handover Signature:", x + 5, y);
+                  y += 4;
+                  if (fromSignature && colIdx === 0) {
+                    try { doc.addImage(fromSignature, 'PNG', x + 5, y, 55, 18); } catch {}
+                  }
+                  doc.setDrawColor(100, 100, 100);
+                  doc.rect(x + 5, y, 55, 18);
+                  y += 22;
+
+                  doc.setFont('helvetica', 'bold');
+                  doc.text("Receiver Signature:", x + 5, y);
+                  y += 4;
+                  if (toSignature && colIdx === 0) {
+                    try { doc.addImage(toSignature, 'PNG', x + 5, y, 55, 18); } catch {}
+                  }
+                  doc.rect(x + 5, y, 55, 18);
+                };
+
+                drawBlock(col1, 0);
+                drawBlock(col2, 1);
+
+                // Footer
+                doc.setFontSize(7);
+                doc.setTextColor(150, 150, 150);
+                doc.text('Starverse Express Courier · Chain of Custody Document · Original stays with company, copy to receiver', pageW / 2, pageH - 5, { align: 'center' });
+
+                doc.save(`handover-${parcel?.tracking_number ?? 'unknown'}-${Date.now()}.pdf`);
+              }}
+              className="w-full rounded-2xl bg-green-600 py-3 text-sm font-bold text-white hover:bg-green-700"
+            >
+              ↓ Download Handover PDF (A4)
             </button>
-            <button onClick={() => navigate(`/parcels/${parcel?.id}/custody`)} className="flex-1 rounded-2xl border border-green-400 py-3 text-sm font-bold text-green-700 hover:bg-green-50">
-              View Chain
-            </button>
+            <div className="flex gap-3">
+              <button onClick={reset} className="flex-1 rounded-2xl bg-brand-500 py-3 text-sm font-bold text-white hover:bg-brand-600">
+                Next Parcel
+              </button>
+              <button onClick={() => navigate(`/parcels/${parcel?.id}/custody`)} className="flex-1 rounded-2xl border border-green-400 py-3 text-sm font-bold text-green-700 hover:bg-green-50">
+                View Chain
+              </button>
+            </div>
           </div>
         </div>
       )}

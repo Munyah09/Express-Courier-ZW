@@ -47,7 +47,7 @@ export function CustodyChainPage() {
   const printDoc = () => window.print();
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5">
+    <div className="mx-auto max-w-4xl space-y-5">
       {/* Actions */}
       <div className="flex items-center justify-between no-print">
         <button onClick={() => navigate(`/parcels/${parcelId}`)} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
@@ -66,7 +66,7 @@ export function CustodyChainPage() {
         <div className="bg-slate-900 text-white px-6 py-5">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-60">Mufasa Express Courier</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-60">Starverse Express Courier</p>
               <h1 className="mt-1 text-xl font-black">Chain of Custody Document</h1>
               <p className="mt-0.5 text-sm opacity-70">Official record of all parcel transfers</p>
             </div>
@@ -211,7 +211,7 @@ export function CustodyChainPage() {
         {/* Footer */}
         <div className="border-t border-slate-200 bg-slate-50 px-6 py-4 text-xs text-slate-400">
           <div className="flex justify-between flex-wrap gap-2">
-            <span>Mufasa Express Courier · mufasa.co.zw · Zimbabwe 🇿🇼</span>
+            <span>Starverse Express Courier · Starverse.co.zw · Zimbabwe 🇿🇼</span>
             <span>Document ID: {parcel?.id?.slice(0, 8).toUpperCase()} · {chain.length} transfer(s)</span>
           </div>
         </div>

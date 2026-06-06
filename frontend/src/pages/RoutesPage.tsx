@@ -3,6 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
 import { useToast } from '../components/Toast';
 
+function useSeedRoutes() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => { const { data } = await api.post('/routes/seed-defaults'); return data.data; },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['routes'] }),
+  });
+}
+
 function useRoutes() {
   return useQuery({ queryKey: ['routes'], queryFn: async () => { const { data } = await api.get('/routes'); return data.data ?? []; } });
 }
@@ -22,6 +30,7 @@ export function RoutesPage() {
   const { data: routes = [], isLoading } = useRoutes();
   const createRoute = useCreateRoute();
   const patchRoute = usePatchRoute();
+  const seedRoutes = useSeedRoutes();
 
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: '', origin: 'Harare', destination: 'Bulawayo', notes: '' });
@@ -52,7 +61,21 @@ export function RoutesPage() {
           <h1 className="text-2xl font-semibold text-slate-900">Routes</h1>
           <p className="text-sm text-slate-500">{activeRoutes.length} active · {suspendedRoutes.length} suspended</p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-600">+ Add Route</button>
+        <div className="flex gap-2">
+          <button
+            onClick={async () => {
+              try {
+                const res = await seedRoutes.mutateAsync();
+                notify(`${res.created} Zimbabwe routes loaded (${res.skipped} already existed)`, 'success');
+              } catch { notify('Failed to load routes', 'error'); }
+            }}
+            disabled={seedRoutes.isPending}
+            className="rounded-xl border border-brand-300 bg-brand-50 px-4 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-100 disabled:opacity-60"
+          >
+            {seedRoutes.isPending ? 'Loading…' : '🗺️ Load Zimbabwe Routes'}
+          </button>
+          <button onClick={() => setShowAdd(true)} className="rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-600">+ Add Route</button>
+        </div>
       </div>
 
       {/* Summary */}
@@ -75,30 +98,42 @@ export function RoutesPage() {
       <div className="space-y-3">
         {routes.map((route: any) => (
           <div key={route.id} className={`rounded-2xl border bg-white p-5 shadow-sm ${route.status === 'active' ? 'border-slate-200' : 'border-slate-100 opacity-60'}`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <p className="text-xs font-semibold uppercase text-slate-500">From</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              {/* Origin → Destination */}
+              <div className="flex items-center gap-3">
+                <div className="text-center min-w-[60px]">
+                  <p className="text-[10px] font-semibold uppercase text-slate-400">From</p>
                   <p className="text-sm font-bold text-slate-900">{route.origin}</p>
                 </div>
-                <div className="flex items-center gap-2 text-slate-400">
-                  <div className="h-px w-8 bg-slate-300" />
-                  <span className="text-lg">✈</span>
-                  <div className="h-px w-8 bg-slate-300" />
+                <div className="flex items-center gap-1.5 text-slate-300">
+                  <div className="h-px w-6 bg-slate-300" />
+                  <span className="text-base">✈</span>
+                  <div className="h-px w-6 bg-slate-300" />
                 </div>
-                <div className="text-center">
-                  <p className="text-xs font-semibold uppercase text-slate-500">To</p>
+                <div className="text-center min-w-[60px]">
+                  <p className="text-[10px] font-semibold uppercase text-slate-400">To</p>
                   <p className="text-sm font-bold text-slate-900">{route.destination}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${route.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>{route.status}</span>
-                <button onClick={() => toggleStatus(route.id, route.status)} className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50">
+              {/* Status + action */}
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${route.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                  {route.status}
+                </span>
+                <button
+                  onClick={() => toggleStatus(route.id, route.status)}
+                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                >
                   {route.status === 'active' ? 'Suspend' : 'Activate'}
                 </button>
               </div>
             </div>
-            {route.notes && <p className="mt-2 text-xs text-slate-400">{route.notes}</p>}
+            {route.notes && (
+              <div className="mt-2">
+                <p className="text-[10px] font-semibold uppercase text-slate-400 mb-0.5">Stops</p>
+                <p className="text-xs text-slate-500 leading-relaxed">{route.notes}</p>
+              </div>
+            )}
           </div>
         ))}
         {!isLoading && routes.length === 0 && (
