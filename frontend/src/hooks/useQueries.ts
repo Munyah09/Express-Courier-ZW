@@ -293,14 +293,26 @@ export const useFranchiseStats = (franchiseId: string) => {
     queryFn: async () => {
       const { data: branches } = await supabase
         .from('branches')
-        .select('id')
+        .select('id, name, city, code')
         .eq('franchise_id', franchiseId);
       const branchIds = (branches ?? []).map((b: any) => b.id);
-      const { count } = await supabase
+      const { count: totalParcels } = await supabase
         .from('parcels')
         .select('id', { count: 'exact', head: true })
         .in('branch_id', branchIds.length ? branchIds : ['none']);
-      return { totalParcels: count ?? 0, branchCount: branchIds.length };
+      const { count: activeParcels } = await supabase
+        .from('parcels')
+        .select('id', { count: 'exact', head: true })
+        .in('branch_id', branchIds.length ? branchIds : ['none'])
+        .not('status', 'in', '("Delivered","Failed","Returned")');
+      return {
+        totalParcels: totalParcels ?? 0,
+        branchCount: branchIds.length,
+        totalRevenue: 0,
+        royaltiesDue: 0,
+        activeParcels: activeParcels ?? 0,
+        branches: branches ?? [],
+      };
     },
     enabled: !!franchiseId,
   });

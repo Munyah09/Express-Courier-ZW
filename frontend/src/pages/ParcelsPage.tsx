@@ -31,7 +31,7 @@ export function ParcelsPage() {
 
   const { data, isLoading } = useListParcels(PAGE_SIZE, page * PAGE_SIZE, filters);
 
-  const total = data?.meta?.total ?? 0;
+  const total = data?.count ?? 0;
   const parcels: any[] = data?.data ?? [];
   const totalPages = Math.ceil(total / PAGE_SIZE);
 

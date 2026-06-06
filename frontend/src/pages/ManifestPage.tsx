@@ -135,7 +135,7 @@ export function ManifestPage() {
   const [selectedManifestId, setSelectedManifestId] = useState<string | null>(null);
 
   const { data, isLoading } = useListManifests(selectedDate);
-  const manifests = data?.data ?? [];
+  const manifests = data ?? [];
 
   if (selectedManifestId) {
     return <ManifestDetail manifestId={selectedManifestId} onBack={() => setSelectedManifestId(null)} />;
