@@ -1,12 +1,14 @@
 {
-  "name": "starverse-express-courier",
+  "name": "mufasa-express-courier",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npx concurrently --kill-others-on-fail \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
-    "build": "npm run build --prefix backend && npm run build --prefix frontend",
-    "start": "npm run start --prefix backend",
-    "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend"
+    "dev": "concurrently --kill-others-on-fail --names \"BE,FE\" --prefix-colors \"bgBlue.bold,bgGreen.bold\" \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "start": "npm --prefix backend run start",
+    "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install",
+    "migrate": "npm --prefix backend run migrate",
+    "seed": "npm --prefix backend run seed"
   },
   "devDependencies": {
     "concurrently": "^8.0.0"
