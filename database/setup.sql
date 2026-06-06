@@ -399,55 +399,55 @@ INSERT INTO permissions (name, description) VALUES
 ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description;
 
 -- ── Users (bcrypt cost 12 hashes) ────────────────────────────
--- super@admin.com        → griezmann17
--- *@Starverse.co.zw         → Demo@1234
+-- super@admin.com        → Admin@2024
+-- All others             → Demo@2024
 
 INSERT INTO users (email, password_hash, first_name, last_name, phone, role_id, is_active) VALUES
   (
     'super@admin.com',
-    '$2a$12$n3E/cTW28FCttvxErUEGm.pp3KCP9hx1IQJiYd191a6u/IJXMe23W',
+    '$2a$12$qU34hbnEyiagRwW9xkJv.e0x78q5IYwmXjFgf1f7OSH7GtLnNzuVK',
     'Munyah','Griezmann','+263771000001',
     (SELECT id FROM roles WHERE name='super_admin'), true
   ),
   (
     'admin@Starverse.co.zw',
-    '$2a$12$dM.b.UiD.ktWTCjk.aL0AeSfCvMoOT1meV8RfEndxErppRp/Ybpkm',
+    '$2a$12$jyUhhR58CW516SWOs54bseSrHvI7lp5bbVAHsICFGfgMibr2cF5AS',
     'Admin','Starverse','+263771000002',
     (SELECT id FROM roles WHERE name='admin'), true
   ),
   (
     'franchise@Starverse.co.zw',
-    '$2a$12$1EzJhcYJP7FsCjKF5I67pOuosTyJe6jsvNFa4tz5UhhAt6i2za3Wa',
+    '$2a$12$jyUhhR58CW516SWOs54bseSrHvI7lp5bbVAHsICFGfgMibr2cF5AS',
     'Franchise','Owner','+263771000003',
     (SELECT id FROM roles WHERE name='franchise_owner'), true
   ),
   (
     'manager@Starverse.co.zw',
-    '$2a$12$AicECnQkIYfNS5yCFdm48ejPGyipPxJSHOJS7LV7SMUp8Gbq/KUnK',
+    '$2a$12$jyUhhR58CW516SWOs54bseSrHvI7lp5bbVAHsICFGfgMibr2cF5AS',
     'Branch','Manager','+263771000004',
     (SELECT id FROM roles WHERE name='branch_manager'), true
   ),
   (
     'driver@Starverse.co.zw',
-    '$2a$12$XILnPPeir99doeCBmQ8h5uBvV9uh1BSzVY.eR5CoJbUEtE7K5Z7my',
+    '$2a$12$jyUhhR58CW516SWOs54bseSrHvI7lp5bbVAHsICFGfgMibr2cF5AS',
     'Tendai','Mhere','+263771000005',
     (SELECT id FROM roles WHERE name='driver'), true
   ),
   (
     'agent@Starverse.co.zw',
-    '$2a$12$B/YWkcDVvL3UqW/9reyoDuuktZXiZf.65WmYcEBhVBU8EHX6V7hvW',
+    '$2a$12$jyUhhR58CW516SWOs54bseSrHvI7lp5bbVAHsICFGfgMibr2cF5AS',
     'Chido','Mupfururi','+263771000006',
     (SELECT id FROM roles WHERE name='shop_assistant'), true
   ),
   (
     'clerk@Starverse.co.zw',
-    '$2a$12$Xlfia5H8LC9ULTEtM99x9.CLNEMiF3a57GOXSsk3q5.0D1WFmfFWC',
+    '$2a$12$jyUhhR58CW516SWOs54bseSrHvI7lp5bbVAHsICFGfgMibr2cF5AS',
     'Rudo','Makoni','+263771000007',
     (SELECT id FROM roles WHERE name='clerk'), true
   ),
   (
     'accounts@Starverse.co.zw',
-    '$2a$12$cyxGcch16LNuF.TDT.B9QuH..ciB1iZx1KtEGAjoAgwiCYGZChxDO',
+    '$2a$12$jyUhhR58CW516SWOs54bseSrHvI7lp5bbVAHsICFGfgMibr2cF5AS',
     'Finance','Controller','+263771000008',
     (SELECT id FROM roles WHERE name='accountant'), true
   )

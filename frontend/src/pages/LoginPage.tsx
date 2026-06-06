@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 
 const DEMO_ACCOUNTS = [
-  { label: 'Super Admin',     email: 'super@admin.com',        password: '@@Griezmann177#$', role: 'super_admin' },
-  { label: 'Admin',           email: 'admin@mufasa.co.zw',     password: 'Demo@1234',   role: 'admin' },
-  { label: 'Branch Manager',  email: 'manager@mufasa.co.zw',   password: 'Demo@1234',   role: 'branch_manager' },
-  { label: 'Driver',          email: 'driver@mufasa.co.zw',    password: 'Demo@1234',   role: 'driver' },
-  { label: 'Shop Assistant',  email: 'agent@mufasa.co.zw',     password: 'Demo@1234',   role: 'shop_assistant' },
-  { label: 'Clerk',           email: 'clerk@mufasa.co.zw',     password: 'Demo@1234',   role: 'clerk' },
+  { label: 'Super Admin',     email: 'super@admin.com',        password: 'Admin@2024',  role: 'super_admin' },
+  { label: 'Admin',           email: 'admin@mufasa.co.zw',     password: 'Demo@2024',   role: 'admin' },
+  { label: 'Branch Manager',  email: 'manager@mufasa.co.zw',   password: 'Demo@2024',   role: 'branch_manager' },
+  { label: 'Driver',          email: 'driver@mufasa.co.zw',    password: 'Demo@2024',   role: 'driver' },
+  { label: 'Shop Assistant',  email: 'agent@mufasa.co.zw',     password: 'Demo@2024',   role: 'shop_assistant' },
+  { label: 'Clerk',           email: 'clerk@mufasa.co.zw',     password: 'Demo@2024',   role: 'clerk' },
 ];
 
 const ROLE_COLORS: Record<string, string> = {
@@ -137,7 +137,7 @@ export function LoginPage() {
             ))}
           </div>
           <p className="mt-3 text-center text-[10px] text-slate-400">
-            Other accounts: <span className="font-mono font-semibold text-slate-600">Demo@1234</span>
+            Other accounts: <span className="font-mono font-semibold text-slate-600">Demo@2024</span>
           </p>
         </div>
 

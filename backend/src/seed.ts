@@ -74,7 +74,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Super Admin (required) ──
   {
     email:      'super@admin.com',
-    password:   '@@Griezmann177#$',
+    password:   'Admin@2024',
     first_name: 'Munyah',
     last_name:  'Griezmann',
     phone:      '+263771000001',
@@ -83,7 +83,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Admin ──
   {
     email:      'admin@Starverse.co.zw',
-    password:   'Demo@1234',
+    password:   'Demo@2024',
     first_name: 'Admin',
     last_name:  'Starverse',
     phone:      '+263771000002',
@@ -92,7 +92,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Franchise Owner ──
   {
     email:      'franchise@Starverse.co.zw',
-    password:   'Demo@1234',
+    password:   'Demo@2024',
     first_name: 'Franchise',
     last_name:  'Owner',
     phone:      '+263771000003',
@@ -101,7 +101,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Branch Manager ──
   {
     email:      'manager@Starverse.co.zw',
-    password:   'Demo@1234',
+    password:   'Demo@2024',
     first_name: 'Branch',
     last_name:  'Manager',
     phone:      '+263771000004',
@@ -110,7 +110,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Driver ──
   {
     email:      'driver@Starverse.co.zw',
-    password:   'Demo@1234',
+    password:   'Demo@2024',
     first_name: 'Tendai',
     last_name:  'Driver',
     phone:      '+263771000005',
@@ -119,7 +119,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Shop Assistant / Agent ──
   {
     email:      'agent@Starverse.co.zw',
-    password:   'Demo@1234',
+    password:   'Demo@2024',
     first_name: 'Chido',
     last_name:  'Agent',
     phone:      '+263771000006',
@@ -128,7 +128,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Clerk ──
   {
     email:      'clerk@Starverse.co.zw',
-    password:   'Demo@1234',
+    password:   'Demo@2024',
     first_name: 'Rudo',
     last_name:  'Clerk',
     phone:      '+263771000007',
@@ -137,7 +137,7 @@ const DEMO_USERS: DemoUser[] = [
   // ── Accountant ──
   {
     email:      'accounts@Starverse.co.zw',
-    password:   'Demo@1234',
+    password:   'Demo@2024',
     first_name: 'Finance',
     last_name:  'Controller',
     phone:      '+263771000008',
