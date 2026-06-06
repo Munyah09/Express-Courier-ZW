@@ -13,7 +13,7 @@
 # Proxy /api/* to the backend — set BACKEND_URL in Netlify env vars
 [[redirects]]
   from   = "/api/*"
-  to     = ":BACKEND_URL/api/:splat"
+  to     = "${BACKEND_URL}/api/:splat"
   status = 200
   force  = true
 
