@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useGetParcel, useUpdateParcelStatus } from '../hooks/useQueries';
 import { useToast } from '../components/Toast';
-import api from '../lib/api';
+import { supabase } from '../lib/supabase';
 
 const STATUSES = ['Accepted', 'Packed', 'In Transit', 'Out For Delivery', 'Delivered', 'Failed', 'Returned'];
 
@@ -67,9 +67,12 @@ export function ParcelDetailPage() {
     if (!parcelId) return;
     setOtpLoading(true);
     try {
-      const { data } = await api.post(`/parcels/${parcelId}/generate`);
-      setGeneratedOtp(data.data.otp_code);
-      notify('OTP generated and sent to receiver', 'success');
+      const otp_code = Math.floor(100000 + Math.random() * 900000).toString();
+      const expires_at = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const { error } = await supabase.from('parcel_otps').insert({ parcel_id: parcelId, otp_code, expires_at });
+      if (error) throw error;
+      setGeneratedOtp(otp_code);
+      notify('OTP generated — share this code with the driver', 'success');
     } catch { notify('Failed to generate OTP', 'error'); }
     finally { setOtpLoading(false); }
   };
@@ -78,7 +81,21 @@ export function ParcelDetailPage() {
     if (!parcelId || !otpInput) return;
     setOtpVerifying(true);
     try {
-      await api.post(`/parcels/${parcelId}/verify`, { otp: otpInput });
+      const { data, error } = await supabase
+        .from('parcel_otps')
+        .select('*')
+        .eq('parcel_id', parcelId)
+        .eq('otp_code', otpInput)
+        .gt('expires_at', new Date().toISOString())
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) { notify('Invalid or expired OTP', 'error'); return; }
+      await supabase.from('parcels').update({ status: 'Delivered' }).eq('id', parcelId);
+      await supabase.from('parcel_events').insert({
+        parcel_id: parcelId,
+        event_type: 'delivered',
+        event_description: 'Delivery confirmed via OTP verification',
+      });
       notify('Delivery confirmed! Parcel marked as Delivered', 'success');
       setOtpInput('');
       setGeneratedOtp(null);

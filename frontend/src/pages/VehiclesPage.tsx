@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../lib/api';
+import { supabase } from '../lib/supabase';
 import { useToast } from '../components/Toast';
 
 const VEHICLE_TYPES = [
@@ -21,17 +21,48 @@ const FUEL_COLORS: Record<string, string> = {
 };
 
 function useVehicles() {
-  return useQuery({ queryKey: ['vehicles'], queryFn: async () => { const { data } = await api.get('/vehicles'); return data.data ?? []; } });
+  return useQuery({
+    queryKey: ['vehicles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('vehicles')
+        .select('*, driver:users!current_driver_id(id, first_name, last_name)')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 }
 
 function useCreateVehicle() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: async (payload: any) => { const { data } = await api.post('/vehicles', payload); return data.data; }, onSuccess: () => qc.invalidateQueries({ queryKey: ['vehicles'] }) });
+  return useMutation({
+    mutationFn: async ({ registration, type, makeModel, mileage, fuelStatus, isThirdParty }: any) => {
+      const reg = registration || `3P-${Date.now()}`;
+      const { data, error } = await supabase.from('vehicles').insert({
+        registration: reg,
+        type,
+        make_model: makeModel || null,
+        mileage: Number(mileage) || 0,
+        fuel_status: fuelStatus || 'full',
+      }).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['vehicles'] }),
+  });
 }
 
 function usePatchVehicle() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: async ({ id, ...payload }: any) => { const { data } = await api.patch(`/vehicles/${id}`, payload); return data.data; }, onSuccess: () => qc.invalidateQueries({ queryKey: ['vehicles'] }) });
+  return useMutation({
+    mutationFn: async ({ id, fuelStatus }: any) => {
+      const { data, error } = await supabase.from('vehicles').update({ fuel_status: fuelStatus }).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['vehicles'] }),
+  });
 }
 
 export function VehiclesPage() {

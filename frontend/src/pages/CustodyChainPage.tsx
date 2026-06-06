@@ -6,7 +6,7 @@
  */
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import api from '../lib/api';
+import { supabase } from '../lib/supabase';
 import { useGetParcel } from '../hooks/useQueries';
 
 const TRANSFER_ICONS: Record<string, string> = {
@@ -30,7 +30,18 @@ const CONDITION_BADGES: Record<string, string> = {
 function useCustodyChain(parcelId: string) {
   return useQuery({
     queryKey: ['custody', parcelId],
-    queryFn: async () => { const { data } = await api.get(`/custody/${parcelId}`); return data.data ?? []; },
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('custody_transfers')
+        .select(`*, from_user:users!from_user_id(first_name, last_name), to_user:users!to_user_id(first_name, last_name), from_vehicle:vehicles!from_vehicle_id(registration, type), to_vehicle:vehicles!to_vehicle_id(registration, type)`)
+        .eq('parcel_id', parcelId)
+        .order('transferred_at', { ascending: true });
+      if (error) {
+        console.warn('custody_transfers not available:', error.message);
+        return [];
+      }
+      return data ?? [];
+    },
     enabled: !!parcelId,
   });
 }

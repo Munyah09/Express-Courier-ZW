@@ -1,21 +1,37 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../lib/api';
+import { supabase } from '../lib/supabase';
 import { useToast } from '../components/Toast';
 
 function useUsers() {
-  return useQuery({ queryKey: ['users'], queryFn: async () => { const { data } = await api.get('/users'); return data.data ?? []; } });
-}
-function useRoles() {
-  return useQuery({ queryKey: ['roles'], queryFn: async () => { const { data } = await api.get('/users'); return data.data ?? []; }, select: () => ['super_admin','admin','franchise_owner','branch_manager','shop_assistant','driver','clerk','accountant','logistics_manager'] });
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('users').select('*, role:roles(id, name)').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 }
 function useCreateUser() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: async (p: any) => { const { data } = await api.post('/users', p); return data.data; }, onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }) });
+  return useMutation({
+    mutationFn: async (_p: any): Promise<any> => {
+      throw new Error('User creation requires Supabase Admin access. Use the Supabase Dashboard → Authentication → Users to add new users.');
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),
+  });
 }
 function usePatchUser() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: async ({ id, ...p }: any) => { const { data } = await api.patch(`/users/${id}`, p); return data.data; }, onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }) });
+  return useMutation({
+    mutationFn: async ({ id, isActive }: any) => {
+      const { data, error } = await supabase.from('users').update({ is_active: isActive }).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),
+  });
 }
 
 const ROLE_COLORS: Record<string, string> = {
@@ -53,7 +69,7 @@ export function UsersPage() {
       notify(`User ${form.firstName} created`, 'success');
       setShowAdd(false);
       setForm({ firstName: '', lastName: '', email: '', phone: '', password: '', role: 'clerk' });
-    } catch (err: any) { notify(err?.response?.data?.error || 'Failed to create user', 'error'); }
+    } catch (err: any) { notify(err?.message || 'Failed to create user', 'error'); }
   };
 
   const toggleActive = async (id: string, isActive: boolean) => {

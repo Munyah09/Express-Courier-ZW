@@ -1,26 +1,80 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../lib/api';
+import { supabase } from '../lib/supabase';
 import { useToast } from '../components/Toast';
+
+const SEED_ROUTES = [
+  { name: 'Harare → Zvishavane (Via Gweru)', origin: 'Harare', destination: 'Zvishavane', notes: 'Stops: Whitehouse/Granary · Norton · Chegutu · Kadoma · Kwekwe · Gweru · Shurugwi · Siboza · Zvishavane · Mberengwa (terminus)' },
+  { name: 'Harare → Zvishavane (Via Masvingo)', origin: 'Harare', destination: 'Zvishavane', notes: 'Stops: Beatrice · Furtherstone · Chivhu · Mvuma · Chaka · Masvingo · Mashava · Mhandamabwe · Zvishavane' },
+  { name: 'Harare → Bulawayo', origin: 'Harare', destination: 'Bulawayo', notes: 'Stops: Norton · Chegutu · Kadoma · Kwekwe · Gweru · Ngezi · Shangani · Halfway House · Bulawayo' },
+  { name: 'Harare → Beitbridge', origin: 'Harare', destination: 'Beitbridge', notes: 'Stops: Beatrice · Chivhu · Mvuma · Masvingo · Ngundu · Bubi · Rutenga · Beitbridge' },
+  { name: 'Harare → Mutare', origin: 'Harare', destination: 'Mutare', notes: 'Stops: Marondera · Rusape · Mutare' },
+  { name: 'Harare → Kariba', origin: 'Harare', destination: 'Kariba', notes: 'Stops: Chinhoyi · Karoi · Makuti · Siakobvu · Kariba' },
+  { name: 'Harare → Chirundu', origin: 'Harare', destination: 'Chirundu', notes: 'Stops: Chinhoyi · Karoi · Makuti · Chirundu (Zimbabwe–Zambia border)' },
+  { name: 'Harare → Hwange', origin: 'Harare', destination: 'Hwange', notes: 'Stops: Kadoma · Kwekwe · Gweru · Bulawayo · Hwange National Park Gate' },
+  { name: 'Harare → Nyanga', origin: 'Harare', destination: 'Nyanga', notes: 'Stops: Marondera · Rusape · Nyanga · Troutbeck Junction' },
+  { name: 'Harare → Chiredzi', origin: 'Harare', destination: 'Chiredzi', notes: 'Stops: Masvingo · Ngundu · Triangle · Chiredzi' },
+  { name: 'Harare → Chimanimani', origin: 'Harare', destination: 'Chimanimani', notes: 'Stops: Marondera · Rusape · Mutare · Wengezi · Skyline Junction · Chimanimani' },
+  { name: 'Harare → Bindura', origin: 'Harare', destination: 'Bindura', notes: 'Stops: Mazowe · Bindura' },
+  { name: 'Harare → Victoria Falls', origin: 'Harare', destination: 'Victoria Falls', notes: 'Stops: Kadoma · Kwekwe · Gweru · Bulawayo · Hwange · Victoria Falls' },
+  { name: 'Harare → Masvingo', origin: 'Harare', destination: 'Masvingo', notes: 'Stops: Beatrice · Chivhu · Mvuma · Masvingo (Great Zimbabwe Road)' },
+  { name: 'Harare → Gweru', origin: 'Harare', destination: 'Gweru', notes: 'Stops: Norton · Chegutu · Kadoma · Kwekwe · Gweru' },
+  { name: 'Harare → Kwekwe', origin: 'Harare', destination: 'Kwekwe', notes: 'Stops: Norton · Chegutu · Kadoma · Kwekwe (Gold City)' },
+  { name: 'Harare → Kadoma', origin: 'Harare', destination: 'Kadoma', notes: 'Stops: Norton · Chegutu · Kadoma' },
+  { name: 'Harare → Chinhoyi', origin: 'Harare', destination: 'Chinhoyi', notes: 'Stops: Norton · Chinhoyi (Caves Road)' },
+  { name: 'Harare → Marondera', origin: 'Harare', destination: 'Marondera', notes: 'Stops: Ruwa · Marondera' },
+  { name: 'Bulawayo → Beitbridge', origin: 'Bulawayo', destination: 'Beitbridge', notes: 'Stops: Gwanda · West Nicholson · Beitbridge' },
+  { name: 'Bulawayo → Victoria Falls', origin: 'Bulawayo', destination: 'Victoria Falls', notes: 'Stops: Hwange · Deka · Victoria Falls' },
+  { name: 'Mutare → Chipinge', origin: 'Mutare', destination: 'Chipinge', notes: 'Stops: Wengezi · Skyline Junction · Chipinge' },
+  { name: 'Mutare → Chiredzi', origin: 'Mutare', destination: 'Chiredzi', notes: 'Stops: Wengezi · Chipinge · Hippo Valley · Chiredzi' },
+  { name: 'Masvingo → Beitbridge', origin: 'Masvingo', destination: 'Beitbridge', notes: 'Stops: Ngundu · Bubi · Rutenga · Beitbridge' },
+  { name: 'Harare → Mbire', origin: 'Harare', destination: 'Mbire', notes: 'Stops: Bindura · Muzarabani · Kairezi · Mbire (remote rural)' },
+];
 
 function useSeedRoutes() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async () => { const { data } = await api.post('/routes/seed-defaults'); return data.data; },
+    mutationFn: async () => {
+      const rows = SEED_ROUTES.map(r => ({ ...r, status: 'active' }));
+      const { error } = await supabase.from('routes').upsert(rows, { onConflict: 'name' });
+      if (error) throw error;
+      return { created: rows.length, skipped: 0 };
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['routes'] }),
   });
 }
 
 function useRoutes() {
-  return useQuery({ queryKey: ['routes'], queryFn: async () => { const { data } = await api.get('/routes'); return data.data ?? []; } });
+  return useQuery({
+    queryKey: ['routes'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('routes').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 }
 function useCreateRoute() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: async (p: any) => { const { data } = await api.post('/routes', p); return data.data; }, onSuccess: () => qc.invalidateQueries({ queryKey: ['routes'] }) });
+  return useMutation({
+    mutationFn: async (p: any) => {
+      const { data, error } = await supabase.from('routes').insert({ ...p, status: 'active' }).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['routes'] }),
+  });
 }
 function usePatchRoute() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: async ({ id, ...p }: any) => { const { data } = await api.patch(`/routes/${id}`, p); return data.data; }, onSuccess: () => qc.invalidateQueries({ queryKey: ['routes'] }) });
+  return useMutation({
+    mutationFn: async ({ id, ...p }: any) => {
+      const { data, error } = await supabase.from('routes').update(p).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['routes'] }),
+  });
 }
 
 const ZW_CITIES = ['Harare', 'Bulawayo', 'Mutare', 'Gweru', 'Kwekwe', 'Kadoma', 'Masvingo', 'Chinhoyi', 'Bindura', 'Marondera', 'Chegutu', 'Zvishavane', 'Redcliff', 'Beitbridge', 'Kariba', 'Victoria Falls', 'Hwange', 'Plumtree', 'Rusape', 'Chipinge', 'Chiredzi'];

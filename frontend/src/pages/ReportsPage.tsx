@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import api from '../lib/api';
+import { supabase } from '../lib/supabase';
 
 const STATUS_COLORS: Record<string, string> = {
   Accepted: '#3b82f6', Packed: '#8b5cf6', 'In Transit': '#f97316',
@@ -11,7 +11,44 @@ const STATUS_COLORS: Record<string, string> = {
 function useReports(from: string, to: string) {
   return useQuery({
     queryKey: ['reports', from, to],
-    queryFn: async () => { const { data } = await api.get('/reports/summary', { params: { from, to } }); return data.data; },
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parcels')
+        .select('id, status, tracking_number, weight, created_at, sender:customers!sender_id(first_name, last_name, phone)')
+        .gte('created_at', `${from}T00:00:00`)
+        .lte('created_at', `${to}T23:59:59`);
+      if (error) throw error;
+      const parcels = data ?? [];
+
+      const statusBreakdown: Record<string, number> = {};
+      for (const p of parcels) {
+        statusBreakdown[p.status] = (statusBreakdown[p.status] ?? 0) + 1;
+      }
+
+      const senderMap: Record<string, { name: string; phone: string; count: number }> = {};
+      for (const p of parcels) {
+        const s: any = Array.isArray(p.sender) ? p.sender[0] : p.sender;
+        if (s) {
+          const key = `${s.first_name} ${s.last_name}`;
+          if (!senderMap[key]) senderMap[key] = { name: key, phone: s.phone ?? '', count: 0 };
+          senderMap[key].count++;
+        }
+      }
+      const topSenders = Object.values(senderMap).sort((a, b) => b.count - a.count).slice(0, 10);
+
+      const total = parcels.length;
+      const delivered = statusBreakdown['Delivered'] ?? 0;
+      const failed = statusBreakdown['Failed'] ?? 0;
+
+      return {
+        totalParcels: total,
+        statusBreakdown,
+        topSenders,
+        recentParcels: [...parcels].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
+        deliveryRate: total ? Math.round((delivered / total) * 100) : 0,
+        failureRate: total ? Math.round((failed / total) * 100) : 0,
+      };
+    },
     enabled: !!from && !!to,
   });
 }

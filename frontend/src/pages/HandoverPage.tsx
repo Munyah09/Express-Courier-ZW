@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import api from '../lib/api';
+import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import { useToast } from '../components/Toast';
 import { SignaturePad } from '../components/SignaturePad';
@@ -34,8 +34,9 @@ function useDrivers() {
   return useQuery({
     queryKey: ['users', 'drivers'],
     queryFn: async () => {
-      const { data } = await api.get('/users');
-      return (data.data ?? []).filter((u: any) => {
+      const { data, error } = await supabase.from('users').select('*, role:roles(id, name)').eq('is_active', true);
+      if (error) throw error;
+      return (data ?? []).filter((u: any) => {
         const role: any = Array.isArray(u.role) ? u.role[0] : u.role;
         return ['driver','shop_assistant','clerk','branch_manager','admin'].includes(role?.name);
       });
@@ -46,7 +47,11 @@ function useDrivers() {
 function useVehicles() {
   return useQuery({
     queryKey: ['vehicles'],
-    queryFn: async () => { const { data } = await api.get('/vehicles'); return data.data ?? []; },
+    queryFn: async () => {
+      const { data, error } = await supabase.from('vehicles').select('*').order('registration');
+      if (error) throw error;
+      return data ?? [];
+    },
   });
 }
 
@@ -54,8 +59,20 @@ function useCreateHandover() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ parcelId, payload }: { parcelId: string; payload: any }) => {
-      const { data } = await api.post(`/custody/${parcelId}/handover`, payload);
-      return data.data;
+      const { data, error } = await supabase.from('custody_transfers').insert({
+        parcel_id: parcelId,
+        from_location: payload.fromLocation,
+        to_user_id: payload.toUserId || null,
+        to_location: payload.toLocation || null,
+        to_vehicle_id: payload.toVehicleId || null,
+        transfer_type: payload.transferType,
+        parcel_condition: payload.parcelCondition,
+        from_signature: payload.fromSignature,
+        notes: payload.notes || null,
+        transferred_at: new Date().toISOString(),
+      }).select().single();
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['custody'] }),
   });
@@ -117,12 +134,13 @@ export function HandoverPage() {
       });
 
       // If receiver signed too, acknowledge immediately
-      if (toSignature) {
-        await api.patch(`/custody/${result.id}/acknowledge`, {
-          toSignature,
-          toLocation,
-          parcelCondition: condition,
-        });
+      if (toSignature && result?.id) {
+        await supabase.from('custody_transfers').update({
+          to_signature: toSignature,
+          to_location: toLocation || null,
+          parcel_condition: condition,
+          acknowledged_at: new Date().toISOString(),
+        }).eq('id', result.id);
       }
 
       // Update parcel status based on transfer type
@@ -135,12 +153,13 @@ export function HandoverPage() {
         failed_return:    'Failed',
         customer_pickup:  'Delivered',
       };
-      if (statusMap[transferType]) {
-        await api.patch(`/parcels/${parcel.id}/status`, {
-          status:          statusMap[transferType],
-          currentLocation: fromLocation,
-          vehicleId:       toVehicleId || undefined,
-          notes,
+      if (statusMap[transferType] && parcel?.id) {
+        await supabase.from('parcels').update({ status: statusMap[transferType], current_location: fromLocation }).eq('id', parcel.id);
+        await supabase.from('parcel_events').insert({
+          parcel_id: parcel.id,
+          event_type: 'status_change',
+          event_description: `Status changed to ${statusMap[transferType]} via handover from ${fromLocation}`,
+          location: fromLocation,
         });
       }
 
@@ -148,7 +167,7 @@ export function HandoverPage() {
       setStep('done');
       notify('Handover recorded successfully', 'success');
     } catch (err: any) {
-      notify(err?.response?.data?.error || 'Failed to record handover', 'error');
+      notify(err?.message || 'Failed to record handover', 'error');
     }
   };
 
