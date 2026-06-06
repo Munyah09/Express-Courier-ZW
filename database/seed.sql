@@ -33,15 +33,15 @@ ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description;
 
 -- ── 3. Users (passwords pre-hashed with bcrypt cost 12) ──────
 -- Passwords:
---   hello@munya.co.zw       → @@Griezmann177#$
+--   super@admin.com          → @@Griezmann177#$
 --   All @Starverse.co.zw       → Demo@1234
 
 INSERT INTO users (email, password_hash, first_name, last_name, phone, role_id, is_active)
 VALUES
   (
-    'hello@munya.co.zw',
+    'super@admin.com',
     '$2a$12$n3E/cTW28FCttvxErUEGm.pp3KCP9hx1IQJiYd191a6u/IJXMe23W',
-    'Munyaradzi', 'Muzvidziwa', '+263771000001',
+    'Munyah', 'Griezmann', '+263771000001',
     (SELECT id FROM roles WHERE name = 'super_admin'), true
   ),
   (

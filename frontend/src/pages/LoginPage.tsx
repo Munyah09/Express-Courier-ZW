@@ -4,7 +4,7 @@ import { useAuth } from '../lib/auth';
 import api from '../lib/api';
 
 const DEMO_ACCOUNTS = [
-  { label: 'Super Admin',     email: 'hello@munya.co.zw',      password: 'griezmann17', role: 'super_admin' },
+  { label: 'Super Admin',     email: 'super@admin.com',        password: 'griezmann17', role: 'super_admin' },
   { label: 'Admin',           email: 'admin@mufasa.co.zw',     password: 'Demo@1234',   role: 'admin' },
   { label: 'Branch Manager',  email: 'manager@mufasa.co.zw',   password: 'Demo@1234',   role: 'branch_manager' },
   { label: 'Driver',          email: 'driver@mufasa.co.zw',    password: 'Demo@1234',   role: 'driver' },

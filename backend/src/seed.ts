@@ -73,10 +73,10 @@ interface DemoUser {
 const DEMO_USERS: DemoUser[] = [
   // ── Super Admin (required) ──
   {
-    email:      'hello@munya.co.zw',
+    email:      'super@admin.com',
     password:   '@@Griezmann177#$',
-    first_name: 'Munyaradzi',
-    last_name:  'Muzvidziwa',
+    first_name: 'Munyah',
+    last_name:  'Griezmann',
     phone:      '+263771000001',
     role:       'super_admin',
   },
